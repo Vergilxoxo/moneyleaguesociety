@@ -14,12 +14,15 @@ async function loadPlayers() {
     .from("auction_players")
     .select("*");
 
-  console.log("LOAD:", data, error);
+  if (error) {
+    console.log("LOAD ERROR:", error);
+    return;
+  }
 
-  if (data) renderTable(data);
+  renderTable(data);
 }
 
-// 🎨 Tabelle rendern
+// 🎨 Tabelle
 function renderTable(players) {
   const table = document.getElementById("playersTable");
   table.innerHTML = "";
@@ -35,7 +38,7 @@ function renderTable(players) {
   });
 }
 
-// 💸 BID LOGIK
+// 💸 Bieten
 async function bid() {
   const playerName = document.getElementById("playerInput").value.trim();
   const bidderName = document.getElementById("bidderInput").value.trim();
@@ -46,14 +49,13 @@ async function bid() {
     return;
   }
 
-  // Spieler suchen
   const { data: existing } = await supabaseClient
     .from("auction_players")
     .select("*")
     .eq("player", playerName)
     .maybeSingle();
 
-  // 🆕 neu
+  // 🆕 INSERT
   if (!existing) {
     const { error } = await supabaseClient
       .from("auction_players")
@@ -73,7 +75,7 @@ async function bid() {
     return;
   }
 
-  // 🔄 update
+  // 🔄 UPDATE
   const { error } = await supabaseClient
     .from("auction_players")
     .update({
@@ -88,9 +90,9 @@ async function bid() {
 // 🔘 Button Event
 document.getElementById("bidBtn").addEventListener("click", bid);
 
-// 🔥 REATIME (wichtig!)
+// 🔥 REALTIME (wenn aktiviert in Supabase)
 supabaseClient
-  .channel("auction_players")
+  .channel("auction_players_channel")
   .on(
     "postgres_changes",
     {
@@ -104,6 +106,11 @@ supabaseClient
     }
   )
   .subscribe();
+
+// 🔁 FALLBACK (wichtig!)
+setInterval(() => {
+  loadPlayers();
+}, 3000);
 
 // 🚀 Start
 loadPlayers();
