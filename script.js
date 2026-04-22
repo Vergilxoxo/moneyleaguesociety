@@ -67,6 +67,10 @@ async function bid() {
 
     console.log("INSERT ERROR:", error);
     return;
+
+    document.getElementById("playerInput").value = "";
+    document.getElementById("bidderInput").value = "";
+    document.getElementById("amountInput").value = "";
   }
 
   // ❌ zu niedrig
