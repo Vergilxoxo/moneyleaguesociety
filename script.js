@@ -3,103 +3,50 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
 );
 
-// 💅 Geld formatieren
-function formatMoney(amount) {
-  return "$" + amount.toLocaleString("de-DE");
-}
-
-// 🔝 Aktiven Spieler laden
-async function loadActivePlayer() {
-  const { data, error } = await supabaseClient
-    .from("players")
-    .select("*")
-    .eq("is_active", true)
-    .single();
-
-  if (data) updateUI(data);
-}
-
-// 🧾 Alle Spieler laden
-async function loadPlayers() {
-  const { data, error } = await supabaseClient
-    .from("players")
-    .select("*");
-
-  if (data) renderTable(data);
-}
-
-// 🎨 UI oben
-function updateUI(player) {
-  document.getElementById("player").innerText = player.name;
-  document.getElementById("bid").innerText = formatMoney(player.current_bid);
-  document.getElementById("bidder").innerText = player.highest_bidder;
-}
-
-// 📊 Tabelle unten
-function renderTable(players) {
-  const table = document.getElementById("playersTable");
-  table.innerHTML = "";
-
-  players.forEach(p => {
-    const status = p.is_active ? "🟢 Aktiv" : "⚪ Offen";
-
-    const row = `
-      <tr>
-        <td>${p.name}</td>
-        <td>${formatMoney(p.current_bid)}</td>
-        <td>${p.highest_bidder}</td>
-        <td>${status}</td>
-      </tr>
-    `;
-
-    table.innerHTML += row;
-  });
-}
-
-// 💸 Bieten
+// GLOBAL verfügbar machen
 window.bid = async function () {
   const name = document.getElementById("name").value;
   const amount = parseInt(document.getElementById("amount").value);
 
-  // Aktiven Spieler holen
-  const { data } = await supabaseClient
-    .from("players")
-    .select("*")
-    .eq("is_active", true)
-    .single();
-
-  const currentBid = data.current_bid;
-
-  if (amount <= currentBid) {
-    alert("Gebot muss höher sein als " + currentBid);
-    return;
-  }
-
   await supabaseClient
-    .from("players")
+    .from("auction")
     .update({
       current_bid: amount,
       highest_bidder: name
     })
-    .eq("id", data.id);
+    .eq("id", 1);
 };
 
-// 🔥 Realtime Updates
+// Daten laden
+async function loadAuction() {
+  const { data, error } = await supabaseClient
+    .from("auction")
+    .select("*")
+    .eq("id", 1)
+    .single();
+
+  console.log(data, error);
+
+  if (data) updateUI(data);
+}
+
+// UI
+function updateUI(data) {
+  document.getElementById("player").innerText = data.player;
+  document.getElementById("bid").innerText = data.current_bid;
+  document.getElementById("bidder").innerText = data.highest_bidder;
+}
+
+// Realtime
 supabaseClient
-  .channel("players")
+  .channel("auction")
   .on(
     "postgres_changes",
-    { event: "UPDATE", schema: "public", table: "players" },
+    { event: "UPDATE", schema: "public", table: "auction" },
     payload => {
-      loadPlayers();
-
-      if (payload.new.is_active) {
-        updateUI(payload.new);
-      }
+      updateUI(payload.new);
     }
   )
   .subscribe();
 
-// 🚀 Start
-loadActivePlayer();
-loadPlayers();
+loadAuction();
