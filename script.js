@@ -3,99 +3,92 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
 );
 
-// 💅 Geld formatieren
+// 💰 Format
 function formatMoney(amount) {
-  return "$" + amount.toLocaleString("de-DE");
+  return "$" + Number(amount || 0).toLocaleString("de-DE");
 }
 
-// 📊 Alle Auktionen laden
+// 📊 Laden
 async function loadPlayers() {
   const { data, error } = await supabaseClient
     .from("auction_players")
     .select("*");
 
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
+  console.log("LOAD:", data, error);
 
   if (data) renderTable(data);
 }
 
-// 🎨 Tabelle rendern
+// 🎨 Tabelle
 function renderTable(players) {
   const table = document.getElementById("playersTable");
   table.innerHTML = "";
 
   players.forEach(p => {
-    const row = `
+    table.innerHTML += `
       <tr>
-        <td>${p.name}</td>
+        <td>${p.player}</td>
         <td>${formatMoney(p.current_bid)}</td>
-        <td>${p.highest_bidder}</td>
+        <td>${p.highest_bidder || "-"}</td>
       </tr>
     `;
-    table.innerHTML += row;
   });
 }
 
-// 💸 Bieten / Spieler anlegen
-window.bid = async function () {
-  console.log("🔥 BID FUNCTION TRIGGERED");
-  const player = document.getElementById("playerInput").value;
-  const name = document.getElementById("name").value;
-  const amount = parseInt(document.getElementById("amount").value);
+// 💸 Bieten
+async function bid() {
+  const playerName = document.getElementById("playerInput").value;
+  const bidderName = document.getElementById("bidderInput").value;
+  const amount = parseInt(document.getElementById("amountInput").value);
 
-  if (!player || !name || !amount) {
-    alert("Bitte alle Felder ausfüllen");
+  if (!playerName || !bidderName || !amount) {
+    alert("Bitte alles ausfüllen");
     return;
   }
 
-  // Prüfen ob Spieler existiert
-  const { data: existing } = await supabaseClient
+  // Spieler holen
+  const { data: existing, error } = await supabaseClient
     .from("auction_players")
     .select("*")
-    .eq("name", player)
+    .eq("player", playerName)
     .maybeSingle();
 
-  // 🆕 Neuer Spieler
+  console.log("EXISTING:", existing, error);
+
+  // 🆕 neu anlegen
   if (!existing) {
-    await supabaseClient
+    const { error: insertError } = await supabaseClient
       .from("auction_players")
       .insert({
-        name: player,
+        player: playerName,
         current_bid: amount,
-        highest_bidder: name
+        highest_bidder: bidderName
       });
 
+    console.log("INSERT ERROR:", insertError);
     return;
   }
 
-  // ❌ Gebot zu niedrig
+  // ❌ zu niedrig
   if (amount <= existing.current_bid) {
     alert("Gebot muss höher sein als " + existing.current_bid);
     return;
   }
 
-  // 🔄 Update
-  await supabaseClient
+  // 🔄 update
+  const { error: updateError } = await supabaseClient
     .from("auction_players")
     .update({
       current_bid: amount,
-      highest_bidder: name
+      highest_bidder: bidderName
     })
     .eq("id", existing.id);
-};
 
-// 🔥 Realtime Updates
-supabaseClient
-  .channel("auction_players")
-  .on(
-    "postgres_changes",
-    { event: "*", schema: "public", table: "auction_players" },
-    () => {
-      loadPlayers();
-    }
-  )
-  .subscribe();
+  console.log("UPDATE ERROR:", updateError);
+}
+
+// 🔥 Button Event (sauber statt onclick)
+document.getElementById("bidBtn").addEventListener("click", bid);
 
 // 🚀 Start
 loadPlayers();
