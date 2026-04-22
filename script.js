@@ -1,6 +1,6 @@
 const supabaseClient = window.supabase.createClient(
   "https://zsfheujopmzxsggvyqds.supabase.co",
-  "DEIN_KEY"
+  "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
 );
 
 // 💅 Geld formatieren
