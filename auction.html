@@ -5,16 +5,31 @@
 </head>
 <body>
 
-<h1 id="player">Lädt...</h1>
-<p>Gebot: <span id="bid">0</span></p>
-<p>Bieter: <span id="bidder">-</span></p>
+<h2>Neue Auktion / Gebot</h2>
 
+<input id="playerInput" placeholder="Spieler">
 <input id="name" placeholder="Dein Name">
-<input id="amount" type="number" placeholder="Betrag">
+<input id="amount" type="number" placeholder="Gebot">
 
 <button onclick="bid()">Bieten</button>
+
+<hr>
+
+<h2>Aktive Auktionen</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Spieler</th>
+      <th>Gebot</th>
+      <th>Bieter</th>
+    </tr>
+  </thead>
+  <tbody id="playersTable"></tbody>
+</table>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="script.js"></script>
 
 </body>
+</html>
