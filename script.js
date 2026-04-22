@@ -1,52 +1,105 @@
 const supabaseClient = window.supabase.createClient(
   "https://zsfheujopmzxsggvyqds.supabase.co",
-  "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
+  "DEIN_KEY"
 );
 
-// GLOBAL verfügbar machen
-window.bid = async function () {
-  const name = document.getElementById("name").value;
-  const amount = parseInt(document.getElementById("amount").value);
+// 💅 Geld formatieren
+function formatMoney(amount) {
+  return "$" + amount.toLocaleString("de-DE");
+}
 
-  await supabaseClient
-    .from("auction")
-    .update({
-      current_bid: amount,
-      highest_bidder: name
-    })
-    .eq("id", 1);
-};
-
-// Daten laden
-async function loadAuction() {
+// 🔝 Aktiven Spieler laden
+async function loadActivePlayer() {
   const { data, error } = await supabaseClient
-    .from("auction")
+    .from("players")
     .select("*")
-    .eq("id", 1)
+    .eq("is_active", true)
     .single();
-
-  console.log(data, error);
 
   if (data) updateUI(data);
 }
 
-// UI
-function updateUI(data) {
-  document.getElementById("player").innerText = data.player;
-  document.getElementById("bid").innerText = data.current_bid;
-  document.getElementById("bidder").innerText = data.highest_bidder;
+// 🧾 Alle Spieler laden
+async function loadPlayers() {
+  const { data, error } = await supabaseClient
+    .from("players")
+    .select("*");
+
+  if (data) renderTable(data);
 }
 
-// Realtime
+// 🎨 UI oben
+function updateUI(player) {
+  document.getElementById("player").innerText = player.name;
+  document.getElementById("bid").innerText = formatMoney(player.current_bid);
+  document.getElementById("bidder").innerText = player.highest_bidder;
+}
+
+// 📊 Tabelle unten
+function renderTable(players) {
+  const table = document.getElementById("playersTable");
+  table.innerHTML = "";
+
+  players.forEach(p => {
+    const status = p.is_active ? "🟢 Aktiv" : "⚪ Offen";
+
+    const row = `
+      <tr>
+        <td>${p.name}</td>
+        <td>${formatMoney(p.current_bid)}</td>
+        <td>${p.highest_bidder}</td>
+        <td>${status}</td>
+      </tr>
+    `;
+
+    table.innerHTML += row;
+  });
+}
+
+// 💸 Bieten
+window.bid = async function () {
+  const name = document.getElementById("name").value;
+  const amount = parseInt(document.getElementById("amount").value);
+
+  // Aktiven Spieler holen
+  const { data } = await supabaseClient
+    .from("players")
+    .select("*")
+    .eq("is_active", true)
+    .single();
+
+  const currentBid = data.current_bid;
+
+  if (amount <= currentBid) {
+    alert("Gebot muss höher sein als " + currentBid);
+    return;
+  }
+
+  await supabaseClient
+    .from("players")
+    .update({
+      current_bid: amount,
+      highest_bidder: name
+    })
+    .eq("id", data.id);
+};
+
+// 🔥 Realtime Updates
 supabaseClient
-  .channel("auction")
+  .channel("players")
   .on(
     "postgres_changes",
-    { event: "UPDATE", schema: "public", table: "auction" },
+    { event: "UPDATE", schema: "public", table: "players" },
     payload => {
-      updateUI(payload.new);
+      loadPlayers();
+
+      if (payload.new.is_active) {
+        updateUI(payload.new);
+      }
     }
   )
   .subscribe();
 
-loadAuction();
+// 🚀 Start
+loadActivePlayer();
+loadPlayers();
