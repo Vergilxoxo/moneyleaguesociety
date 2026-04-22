@@ -22,7 +22,7 @@ async function loadPlayers() {
   renderTable(data);
 }
 
-// 🎨 Tabelle
+// 🎨 Tabelle rendern
 function renderTable(players) {
   const table = document.getElementById("playersTable");
   table.innerHTML = "";
@@ -66,37 +66,37 @@ async function bid() {
       });
 
     console.log("INSERT ERROR:", error);
-    return;
-
-  }
-
-  // ❌ zu niedrig
-  if (amount <= existing.current_bid) {
-    alert("Gebot muss höher sein als " + existing.current_bid);
-    return;
-  }
-
+  } 
   // 🔄 UPDATE
-  const { error } = await supabaseClient
-    .from("auction_players")
-    .update({
-      current_bid: amount,
-      highest_bidder: bidderName
-    })
-    .eq("id", existing.id);
-  
-  console.log("UPDATE ERROR:", error);
-}
+  else {
+    if (amount <= existing.current_bid) {
+      alert("Gebot muss höher sein als " + existing.current_bid);
+      return;
+    }
 
-// ✅ IMMER am Ende ausführen
+    const { error } = await supabaseClient
+      .from("auction_players")
+      .update({
+        current_bid: amount,
+        highest_bidder: bidderName
+      })
+      .eq("id", existing.id);
+
+    console.log("UPDATE ERROR:", error);
+  }
+
+  // 🧹 INPUTS LEEREN (WICHTIG!)
   document.getElementById("playerInput").value = "";
   document.getElementById("bidderInput").value = "";
   document.getElementById("amountInput").value = "";
 
+  document.getElementById("playerInput").focus();
+}
+
 // 🔘 Button Event
 document.getElementById("bidBtn").addEventListener("click", bid);
 
-// 🔥 REALTIME (wenn aktiviert in Supabase)
+// 🔥 REALTIME (wenn in Supabase aktiviert)
 supabaseClient
   .channel("auction_players_channel")
   .on(
@@ -113,7 +113,7 @@ supabaseClient
   )
   .subscribe();
 
-// 🔁 FALLBACK (wichtig!)
+// 🔁 FALLBACK (sicherer Refresh)
 setInterval(() => {
   loadPlayers();
 }, 3000);
