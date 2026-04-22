@@ -39,6 +39,7 @@ function renderTable(players) {
 
 // 💸 Bieten / Spieler anlegen
 window.bid = async function () {
+  console.log("🔥 BID FUNCTION TRIGGERED");
   const player = document.getElementById("playerInput").value;
   const name = document.getElementById("name").value;
   const amount = parseInt(document.getElementById("amount").value);
