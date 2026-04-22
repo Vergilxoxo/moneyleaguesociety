@@ -3,50 +3,98 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
 );
 
-// GLOBAL verfügbar machen
+// 💅 Geld formatieren
+function formatMoney(amount) {
+  return "$" + amount.toLocaleString("de-DE");
+}
+
+// 📊 Alle Auktionen laden
+async function loadPlayers() {
+  const { data, error } = await supabaseClient
+    .from("auction_players")
+    .select("*");
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  if (data) renderTable(data);
+}
+
+// 🎨 Tabelle rendern
+function renderTable(players) {
+  const table = document.getElementById("playersTable");
+  table.innerHTML = "";
+
+  players.forEach(p => {
+    const row = `
+      <tr>
+        <td>${p.name}</td>
+        <td>${formatMoney(p.current_bid)}</td>
+        <td>${p.highest_bidder}</td>
+      </tr>
+    `;
+    table.innerHTML += row;
+  });
+}
+
+// 💸 Bieten / Spieler anlegen
 window.bid = async function () {
+  const player = document.getElementById("playerInput").value;
   const name = document.getElementById("name").value;
   const amount = parseInt(document.getElementById("amount").value);
 
+  if (!player || !name || !amount) {
+    alert("Bitte alle Felder ausfüllen");
+    return;
+  }
+
+  // Prüfen ob Spieler existiert
+  const { data: existing } = await supabaseClient
+    .from("auction_players")
+    .select("*")
+    .eq("name", player)
+    .maybeSingle();
+
+  // 🆕 Neuer Spieler
+  if (!existing) {
+    await supabaseClient
+      .from("auction_players")
+      .insert({
+        name: player,
+        current_bid: amount,
+        highest_bidder: name
+      });
+
+    return;
+  }
+
+  // ❌ Gebot zu niedrig
+  if (amount <= existing.current_bid) {
+    alert("Gebot muss höher sein als " + existing.current_bid);
+    return;
+  }
+
+  // 🔄 Update
   await supabaseClient
-    .from("auction")
+    .from("auction_players")
     .update({
       current_bid: amount,
       highest_bidder: name
     })
-    .eq("id", 1);
+    .eq("id", existing.id);
 };
 
-// Daten laden
-async function loadAuction() {
-  const { data, error } = await supabaseClient
-    .from("auction")
-    .select("*")
-    .eq("id", 1)
-    .single();
-
-  console.log(data, error);
-
-  if (data) updateUI(data);
-}
-
-// UI
-function updateUI(data) {
-  document.getElementById("player").innerText = data.player;
-  document.getElementById("bid").innerText = data.current_bid;
-  document.getElementById("bidder").innerText = data.highest_bidder;
-}
-
-// Realtime
+// 🔥 Realtime Updates
 supabaseClient
-  .channel("auction")
+  .channel("auction_players")
   .on(
     "postgres_changes",
-    { event: "UPDATE", schema: "public", table: "auction" },
-    payload => {
-      updateUI(payload.new);
+    { event: "*", schema: "public", table: "auction_players" },
+    () => {
+      loadPlayers();
     }
   )
   .subscribe();
 
-loadAuction();
+// 🚀 Start
+loadPlayers();
