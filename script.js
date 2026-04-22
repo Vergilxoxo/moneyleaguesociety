@@ -3,7 +3,6 @@ const supabaseClient = window.supabase.createClient(
   "sb_publishable_WSCtZyvff9GEsvlOo4Iazw_r6bA9m6p"
 );
 
-
 // 💅 Geld formatieren
 function formatMoney(amount) {
   return "$" + amount.toLocaleString("de-DE");
