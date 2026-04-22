@@ -84,13 +84,14 @@ async function bid() {
       highest_bidder: bidderName
     })
     .eq("id", existing.id);
-
-  document.getElementById("playerInput").value = "";
-  document.getElementById("bidderInput").value = "";
-  document.getElementById("amountInput").value = "";
   
   console.log("UPDATE ERROR:", error);
 }
+
+// ✅ IMMER am Ende ausführen
+  document.getElementById("playerInput").value = "";
+  document.getElementById("bidderInput").value = "";
+  document.getElementById("amountInput").value = "";
 
 // 🔘 Button Event
 document.getElementById("bidBtn").addEventListener("click", bid);
