@@ -8,7 +8,7 @@ function formatMoney(amount) {
   return "$" + Number(amount || 0).toLocaleString("de-DE");
 }
 
-// 📊 Laden
+// 📊 Daten laden
 async function loadPlayers() {
   const { data, error } = await supabaseClient
     .from("auction_players")
@@ -19,7 +19,7 @@ async function loadPlayers() {
   if (data) renderTable(data);
 }
 
-// 🎨 Tabelle
+// 🎨 Tabelle rendern
 function renderTable(players) {
   const table = document.getElementById("playersTable");
   table.innerHTML = "";
@@ -35,29 +35,27 @@ function renderTable(players) {
   });
 }
 
-// 💸 Bieten
+// 💸 BID LOGIK
 async function bid() {
-  const playerName = document.getElementById("playerInput").value;
-  const bidderName = document.getElementById("bidderInput").value;
+  const playerName = document.getElementById("playerInput").value.trim();
+  const bidderName = document.getElementById("bidderInput").value.trim();
   const amount = parseInt(document.getElementById("amountInput").value);
 
   if (!playerName || !bidderName || !amount) {
-    alert("Bitte alles ausfüllen");
+    alert("Bitte alle Felder ausfüllen");
     return;
   }
 
-  // Spieler holen
-  const { data: existing, error } = await supabaseClient
+  // Spieler suchen
+  const { data: existing } = await supabaseClient
     .from("auction_players")
     .select("*")
     .eq("player", playerName)
     .maybeSingle();
 
-  console.log("EXISTING:", existing, error);
-
-  // 🆕 neu anlegen
+  // 🆕 neu
   if (!existing) {
-    const { error: insertError } = await supabaseClient
+    const { error } = await supabaseClient
       .from("auction_players")
       .insert({
         player: playerName,
@@ -65,7 +63,7 @@ async function bid() {
         highest_bidder: bidderName
       });
 
-    console.log("INSERT ERROR:", insertError);
+    console.log("INSERT ERROR:", error);
     return;
   }
 
@@ -76,7 +74,7 @@ async function bid() {
   }
 
   // 🔄 update
-  const { error: updateError } = await supabaseClient
+  const { error } = await supabaseClient
     .from("auction_players")
     .update({
       current_bid: amount,
@@ -84,11 +82,28 @@ async function bid() {
     })
     .eq("id", existing.id);
 
-  console.log("UPDATE ERROR:", updateError);
+  console.log("UPDATE ERROR:", error);
 }
 
-// 🔥 Button Event (sauber statt onclick)
+// 🔘 Button Event
 document.getElementById("bidBtn").addEventListener("click", bid);
+
+// 🔥 REATIME (wichtig!)
+supabaseClient
+  .channel("auction_players")
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "auction_players"
+    },
+    (payload) => {
+      console.log("REALTIME EVENT:", payload);
+      loadPlayers();
+    }
+  )
+  .subscribe();
 
 // 🚀 Start
 loadPlayers();
