@@ -1118,6 +1118,17 @@ thead th.sort-desc::after {
 
 /* Auction Styles */
 
+#playerInput,
+#bidderInput,
+#amountInput {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: #1b2a3a;
+  color: #ffffff;
+  font-size: 14px;
+}
+
 .auction-controls {
   display: flex;
   gap: 12px;
@@ -1125,33 +1136,41 @@ thead th.sort-desc::after {
   flex-wrap: wrap;
 }
 
-/* WICHTIG: Override deiner globalen filter-container input Regel */
-.auction-controls input {
-  flex: none !important;
-  width: auto;
-}
-
-/* Spieler Suche (größer, aber sauber begrenzt) */
+/* WICHTIG: KEIN width:100% mehr! */
 #playerInput {
   flex: 2;
   min-width: 260px;
 }
 
-/* Bieter */
 #bidderInput {
   flex: 1;
   min-width: 160px;
 }
 
-/* Betrag */
 #amountInput {
   flex: 1;
   min-width: 140px;
 }
 
-/* Buttons fix */
+/* Buttons */
 #bidBtn,
 #syncBtn {
   flex: 0 0 auto;
-  white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #1e90ff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#bidBtn:hover,
+#syncBtn:hover {
+  background-color: #187bcd;
+}
+
+/* Dropdown hover */
+#playerDropdown li:hover {
+  background-color: #223348;
 }
