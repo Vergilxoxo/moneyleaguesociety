@@ -1142,10 +1142,17 @@ thead th.sort-desc::after {
   font-size: 14px;
 }
 
-/* Layout: Player Search */
-#playerInput {
+/* ❗ WICHTIG: Player Input NICHT mehr selbst steuern */
+.player-wrapper {
+  position: relative;
   flex: 2;
   min-width: 260px;
+}
+
+/* Input füllt Wrapper sauber */
+.player-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Layout: Bidder */
@@ -1179,12 +1186,34 @@ thead th.sort-desc::after {
   background-color: #187bcd;
 }
 
-/* Dropdown */
+/* ======================
+   DROPDOWN FIX
+====================== */
+
+#playerDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #1b2a3a;
+  border: 1px solid #223348;
+  border-radius: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+/* Dropdown Items */
+#playerDropdown li {
+  padding: 8px;
+  cursor: pointer;
+}
+
 #playerDropdown li:hover {
   background-color: #223348;
 }
 
-/* Safety: Dropdown sauber halten */
-#playerDropdown {
-  box-sizing: border-box;
-}
