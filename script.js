@@ -10,9 +10,7 @@ function formatMoney(amount) {
   return "$" + Number(amount || 0).toLocaleString("de-DE");
 }
 
-// 🔄 Sleeper Sync (Frontend)
-document.getElementById("syncBtn").addEventListener("click", syncPlayers);
-
+// 🔄 Sleeper Sync
 async function syncPlayers() {
   const status = document.getElementById("status");
   status.innerText = "⏳ Lade Spieler...";
@@ -20,6 +18,8 @@ async function syncPlayers() {
   const LEAGUE_ID = "1311998228123643904";
 
   try {
+    console.log("Starte Sync...");
+
     const playersRes = await fetch("https://api.sleeper.app/v1/players/nfl");
     const players = await playersRes.json();
 
@@ -38,50 +38,15 @@ async function syncPlayers() {
 
     playersPool = freeAgents;
 
+    console.log("Free Agents:", freeAgents.length);
+
     status.innerText = "✅ " + freeAgents.length + " Spieler geladen";
 
   } catch (err) {
-    status.innerText = "❌ Fehler beim Laden";
     console.error(err);
+    status.innerText = "❌ Fehler beim Laden";
   }
 }
-
-// 🔍 Autocomplete
-const input = document.getElementById("playerInput");
-const dropdown = document.getElementById("playerDropdown");
-
-input.addEventListener("input", () => {
-  const value = input.value.toLowerCase();
-  dropdown.innerHTML = "";
-
-  if (!value) return;
-
-  const filtered = playersPool
-    .filter(p => p.full_name?.toLowerCase().includes(value))
-    .slice(0, 10);
-
-  filtered.forEach(player => {
-    const li = document.createElement("li");
-    li.innerText = `${player.full_name} (${player.position})`;
-
-    li.style.padding = "5px";
-    li.style.cursor = "pointer";
-
-    li.addEventListener("click", () => {
-      input.value = player.full_name;
-      dropdown.innerHTML = "";
-    });
-
-    dropdown.appendChild(li);
-  });
-});
-
-// Dropdown schließen
-document.addEventListener("click", (e) => {
-  if (!input.contains(e.target)) {
-    dropdown.innerHTML = "";
-  }
-});
 
 // 📊 Daten laden
 async function loadPlayers() {
@@ -115,6 +80,7 @@ function renderTable(players) {
 
 // 💸 Bieten
 async function bid() {
+  const input = document.getElementById("playerInput");
   const playerName = input.value.trim();
   const bidderName = document.getElementById("bidderInput").value.trim();
   const amount = parseInt(document.getElementById("amountInput").value);
@@ -141,7 +107,6 @@ async function bid() {
 
     console.log("INSERT ERROR:", error);
   } else {
-
     if (amount <= existing.current_bid) {
       alert("Gebot muss höher sein als " + existing.current_bid);
       return;
@@ -158,16 +123,58 @@ async function bid() {
     console.log("UPDATE ERROR:", error);
   }
 
-  // 🧹 Inputs leeren
+  // 🧹 Clear Inputs
   input.value = "";
   document.getElementById("bidderInput").value = "";
   document.getElementById("amountInput").value = "";
-
   input.focus();
 }
 
-// Button Event
-document.getElementById("bidBtn").addEventListener("click", bid);
+// 🚀 DOM READY (WICHTIG!)
+document.addEventListener("DOMContentLoaded", () => {
+
+  const input = document.getElementById("playerInput");
+  const dropdown = document.getElementById("playerDropdown");
+
+  // Button Events
+  document.getElementById("syncBtn").addEventListener("click", syncPlayers);
+  document.getElementById("bidBtn").addEventListener("click", bid);
+
+  // 🔍 Autocomplete
+  input.addEventListener("input", () => {
+    const value = input.value.toLowerCase();
+    dropdown.innerHTML = "";
+
+    if (!value) return;
+
+    const filtered = playersPool
+      .filter(p => p.full_name?.toLowerCase().includes(value))
+      .slice(0, 10);
+
+    filtered.forEach(player => {
+      const li = document.createElement("li");
+      li.innerText = `${player.full_name} (${player.position})`;
+
+      li.style.padding = "5px";
+      li.style.cursor = "pointer";
+
+      li.addEventListener("click", () => {
+        input.value = player.full_name;
+        dropdown.innerHTML = "";
+      });
+
+      dropdown.appendChild(li);
+    });
+  });
+
+  // Dropdown schließen
+  document.addEventListener("click", (e) => {
+    if (!input.contains(e.target)) {
+      dropdown.innerHTML = "";
+    }
+  });
+
+});
 
 // 🔥 Realtime
 supabaseClient
