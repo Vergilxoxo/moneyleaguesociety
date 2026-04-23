@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Auktion 0.11</title>
+  <title>Auktion</title>
 </head>
 <body>
 
+<h2>Spieler laden (Sleeper)</h2>
+<button id="syncBtn">Spieler laden</button>
+<p id="status"></p>
+
+<hr>
+
 <h2>Auktion</h2>
 
-<input id="playerInput" placeholder="Spieler (z.B. Messi)">
+<div style="position: relative;">
+  <input id="playerInput" placeholder="Spieler suchen">
+  <ul id="playerDropdown" style="
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    width: 250px;
+    max-height: 200px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  "></ul>
+</div>
+
 <input id="bidderInput" placeholder="Dein Name">
 <input id="amountInput" type="number" placeholder="Gebot">
 
