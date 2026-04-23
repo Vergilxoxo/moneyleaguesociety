@@ -18,8 +18,6 @@ async function syncPlayers() {
   const LEAGUE_ID = "1311998228123643904";
 
   try {
-    console.log("Starte Sync...");
-
     const playersRes = await fetch("https://api.sleeper.app/v1/players/nfl");
     const players = await playersRes.json();
 
@@ -32,21 +30,66 @@ async function syncPlayers() {
       rosters.flatMap(r => r.players || [])
     );
 
-    const freeAgents = Object.values(players).filter(
+    playersPool = Object.values(players).filter(
       p => p.player_id && !rostered.has(p.player_id)
     );
 
-    playersPool = freeAgents;
-
-    console.log("Free Agents:", freeAgents.length);
-
-    status.innerText = "✅ " + freeAgents.length + " Spieler geladen";
+    status.innerText = "✅ " + playersPool.length + " Spieler geladen";
 
   } catch (err) {
     console.error(err);
     status.innerText = "❌ Fehler beim Laden";
   }
 }
+
+// 🔍 Autocomplete
+document.addEventListener("DOMContentLoaded", () => {
+
+  const input = document.getElementById("playerInput");
+  const dropdown = document.getElementById("playerDropdown");
+
+  document.getElementById("syncBtn").addEventListener("click", syncPlayers);
+  document.getElementById("bidBtn").addEventListener("click", bid);
+
+  input.addEventListener("input", () => {
+    const value = input.value.toLowerCase();
+    dropdown.innerHTML = "";
+
+    if (!value) return;
+
+    const filtered = playersPool
+      .filter(p =>
+        p.full_name?.toLowerCase().includes(value)
+      )
+      .slice(0, 10);
+
+    filtered.forEach(player => {
+      const li = document.createElement("li");
+
+      li.innerText =
+        `${player.full_name} - ${player.position || "?"} - ${player.team || "FA"}`;
+
+      li.style.padding = "6px";
+      li.style.cursor = "pointer";
+
+      li.addEventListener("click", () => {
+        input.value = player.full_name;
+        input.dataset.position = player.position;
+        input.dataset.team = player.team;
+        dropdown.innerHTML = "";
+      });
+
+      dropdown.appendChild(li);
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!input.contains(e.target)) {
+      dropdown.innerHTML = "";
+    }
+  });
+
+});
 
 // 📊 Daten laden
 async function loadPlayers() {
@@ -71,6 +114,8 @@ function renderTable(players) {
     table.innerHTML += `
       <tr>
         <td>${p.player}</td>
+        <td>${p.position || "-"}</td>
+        <td>${p.team || "-"}</td>
         <td>${formatMoney(p.current_bid)}</td>
         <td>${p.highest_bidder || "-"}</td>
       </tr>
@@ -80,10 +125,15 @@ function renderTable(players) {
 
 // 💸 Bieten
 async function bid() {
+
   const input = document.getElementById("playerInput");
+
   const playerName = input.value.trim();
   const bidderName = document.getElementById("bidderInput").value.trim();
   const amount = parseInt(document.getElementById("amountInput").value);
+
+  const position = input.dataset.position;
+  const team = input.dataset.team;
 
   if (!playerName || !bidderName || !amount) {
     alert("Bitte alle Felder ausfüllen");
@@ -97,16 +147,21 @@ async function bid() {
     .maybeSingle();
 
   if (!existing) {
+
     const { error } = await supabaseClient
       .from("auction_players")
       .insert({
         player: playerName,
         current_bid: amount,
-        highest_bidder: bidderName
+        highest_bidder: bidderName,
+        position: position,
+        team: team
       });
 
     console.log("INSERT ERROR:", error);
+
   } else {
+
     if (amount <= existing.current_bid) {
       alert("Gebot muss höher sein als " + existing.current_bid);
       return;
@@ -116,65 +171,25 @@ async function bid() {
       .from("auction_players")
       .update({
         current_bid: amount,
-        highest_bidder: bidderName
+        highest_bidder: bidderName,
+        position: position,
+        team: team
       })
       .eq("id", existing.id);
 
     console.log("UPDATE ERROR:", error);
   }
 
-  // 🧹 Clear Inputs
+  // 🧹 Reset
   input.value = "";
+  input.dataset.position = "";
+  input.dataset.team = "";
+
   document.getElementById("bidderInput").value = "";
   document.getElementById("amountInput").value = "";
+
   input.focus();
 }
-
-// 🚀 DOM READY (WICHTIG!)
-document.addEventListener("DOMContentLoaded", () => {
-
-  const input = document.getElementById("playerInput");
-  const dropdown = document.getElementById("playerDropdown");
-
-  // Button Events
-  document.getElementById("syncBtn").addEventListener("click", syncPlayers);
-  document.getElementById("bidBtn").addEventListener("click", bid);
-
-  // 🔍 Autocomplete
-  input.addEventListener("input", () => {
-    const value = input.value.toLowerCase();
-    dropdown.innerHTML = "";
-
-    if (!value) return;
-
-    const filtered = playersPool
-      .filter(p => p.full_name?.toLowerCase().includes(value))
-      .slice(0, 10);
-
-    filtered.forEach(player => {
-      const li = document.createElement("li");
-      li.innerText = `${player.full_name} • ${player.position} • ${player.team || "FA"}`;
-
-      li.style.padding = "5px";
-      li.style.cursor = "pointer";
-
-      li.addEventListener("click", () => {
-        input.value = player.full_name;
-        dropdown.innerHTML = "";
-      });
-
-      dropdown.appendChild(li);
-    });
-  });
-
-  // Dropdown schließen
-  document.addEventListener("click", (e) => {
-    if (!input.contains(e.target)) {
-      dropdown.innerHTML = "";
-    }
-  });
-
-});
 
 // 🔥 Realtime
 supabaseClient
@@ -186,9 +201,7 @@ supabaseClient
       schema: "public",
       table: "auction_players"
     },
-    () => {
-      loadPlayers();
-    }
+    () => loadPlayers()
   )
   .subscribe();
 
