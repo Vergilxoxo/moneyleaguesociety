@@ -1152,3 +1152,35 @@ thead th.sort-desc::after {
 #playerDropdown li:hover {
   background-color: #223348;
 }
+
+.auction-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Spieler Input (größer) */
+#playerInput {
+  flex: 2;
+  min-width: 220px;
+}
+
+/* Bieter Input */
+#bidderInput {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* Betrag Input */
+#amountInput {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Buttons */
+#bidBtn,
+#syncBtn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
