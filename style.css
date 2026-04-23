@@ -1139,7 +1139,7 @@ thead th.sort-desc::after {
   border: none;
   background-color: #1b2a3a;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* ❗ WICHTIG: Player Input NICHT mehr selbst steuern */
