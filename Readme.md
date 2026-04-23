@@ -3,11 +3,9 @@
 - Design Mobile auf dem Handy muss sich entsprechend gut im Design anpassen
 
 Funktionality
-- Ablaufdatum der Auktion muss erstellt werden 
-  - Bedeutet Auktion geht 24 Stunden 
-  - Auktion wird auf 24 Stunden zurueck gesetzt wenn jemand bietet
-  - Eine Auktion die >24 Stunden ist kann nicht mehr geboten werden und wird auf abgeschlossen gesetzt
+- Spieler (Owner) hinterlegen als Dropdown Menü, sodass sich jeder auswählen kann
+- 
 
 Anpassungen/Rules
 
-- 
+- Mindestgebot einstellen - Also es muss mindestens 100k mehr geboten werden - 500k Minimum
