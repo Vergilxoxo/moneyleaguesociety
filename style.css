@@ -1138,6 +1138,7 @@ thead th.sort-desc::after {
   background-color: #1b2a3a;
   color: #ffffff;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 /* Layout: Player Search */
