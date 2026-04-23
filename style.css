@@ -1118,41 +1118,6 @@ thead th.sort-desc::after {
 
 /* Auction Styles */
 
-#playerInput,
-#bidderInput,
-#amountInput {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  background-color: #1b2a3a;
-  color: #ffffff;
-  font-size: 14px;
-}
-
-#playerInput {
-  width: 100%;
-}
-
-#bidBtn,
-#syncBtn {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  background-color: #1e90ff;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-#bidBtn:hover,
-#syncBtn:hover {
-  background-color: #187bcd;
-}
-
-#playerDropdown li:hover {
-  background-color: #223348;
-}
-
 .auction-controls {
   display: flex;
   gap: 12px;
