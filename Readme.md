@@ -18,3 +18,4 @@ Optional: Mindest-Erhöhung (z. B. +1 oder +5)
 Anpassungen/Rules
 
 - Mindestgebot einstellen - Also es muss mindestens 100k mehr geboten werden - 500k Minimum
+- PopUp wenn Gebot zu niedrig verbessern
