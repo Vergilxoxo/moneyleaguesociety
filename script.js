@@ -23,7 +23,20 @@ function formatTimeLeft(endTime) {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
-  return `${hours}h ${minutes}m`;
+  const timeString = `${hours}h ${minutes}m`;
+
+  // 🔴 < 1 Stunde
+  if (diff < 60 * 60 * 1000) {
+    return `<span style="color:#ff4d4d; font-weight:600;">🔴 ${timeString}</span>`;
+  }
+
+  // 🟠 < 6 Stunden
+  if (diff < 6 * 60 * 60 * 1000) {
+    return `<span style="color:#ffa500; font-weight:600;">🟠 ${timeString}</span>`;
+  }
+
+  // 🟢 >= 6 Stunden
+  return `<span style="color:#4caf50;">🟢 ${timeString}</span>`;
 }
 
 // 🔄 Sleeper Sync
