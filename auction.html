@@ -1,44 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
+  <meta charset="UTF-8">
   <title>Auktion</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h2>Spieler laden (Sleeper)</h2>
-<button id="syncBtn">Spieler laden</button>
-<p id="status"></p>
+<!-- NAVBAR (optional falls du sie auch hier nutzt) -->
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="nav-logo">Dashboard</a>
+    <a href="roster.html" class="nav-link">Roster</a>
+    <a href="players.html" class="nav-link">Spielerliste</a>
 
-<hr>
+    <div class="dropdown">
+      <button class="dropbtn">League ▾</button>
+      <div class="dropdown-content">
+        <a href="transactions.html">Transactions</a>
+        <a href="statpage.html">Fantasy Stats</a>
+        <a href="records.html">League Records</a>
+        <a href="hof.html">Hall of Fame</a>
+      </div>
+    </div>
 
-<h2>Auktion</h2>
+    <a href="salary.html" class="nav-link">Salary</a>
+  </div>
+</nav>
 
-<div style="position: relative;">
-  <input id="playerInput" placeholder="Spieler suchen">
-  <ul id="playerDropdown" style="
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    width: 280px;
-    max-height: 200px;
-    overflow-y: auto;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    z-index: 10;
-  "></ul>
+<h1>Auktion</h1>
+
+<!-- =========================
+     PLAYER LOAD SECTION
+========================= -->
+<div class="filter-container">
+
+  <button id="syncBtn">Spieler laden</button>
+  <span id="status"></span>
+
 </div>
 
-<input id="bidderInput" placeholder="Dein Name">
-<input id="amountInput" type="number" placeholder="Gebot">
+<!-- =========================
+     AUCTION INPUT SECTION
+========================= -->
+<h2>Auktion starten</h2>
 
-<button id="bidBtn">Bieten</button>
+<div class="filter-container" style="position: relative;">
 
-<hr>
+  <!-- Player Input + Dropdown -->
+  <div style="position: relative; flex: 2;">
+    <input id="playerInput" placeholder="Spieler suchen">
 
+    <ul id="playerDropdown" style="
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #1b2a3a;
+      border: 1px solid #223348;
+      border-radius: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      z-index: 50;
+    "></ul>
+  </div>
+
+  <input id="bidderInput" placeholder="Bieter">
+  <input id="amountInput" type="number" placeholder="Gebot">
+
+  <button id="bidBtn">Bieten</button>
+
+</div>
+
+<!-- =========================
+     ACTIVE AUCTIONS TABLE
+========================= -->
 <h2>Aktive Auktionen</h2>
 
-<table border="1">
+<table>
   <thead>
     <tr>
       <th>Spieler</th>
