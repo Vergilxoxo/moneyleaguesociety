@@ -1116,8 +1116,19 @@ thead th.sort-desc::after {
   margin-bottom: 8px;
 }
 
-/* Auction Styles */
+/* ======================
+   AUCTION STYLES
+====================== */
 
+/* Layout Container */
+.auction-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Inputs (Design) */
 #playerInput,
 #bidderInput,
 #amountInput {
@@ -1129,24 +1140,19 @@ thead th.sort-desc::after {
   font-size: 14px;
 }
 
-.auction-controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* WICHTIG: KEIN width:100% mehr! */
+/* Layout: Player Search */
 #playerInput {
   flex: 2;
   min-width: 260px;
 }
 
+/* Layout: Bidder */
 #bidderInput {
   flex: 1;
   min-width: 160px;
 }
 
+/* Layout: Amount */
 #amountInput {
   flex: 1;
   min-width: 140px;
@@ -1163,6 +1169,7 @@ thead th.sort-desc::after {
   color: white;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 #bidBtn:hover,
@@ -1170,7 +1177,12 @@ thead th.sort-desc::after {
   background-color: #187bcd;
 }
 
-/* Dropdown hover */
+/* Dropdown */
 #playerDropdown li:hover {
   background-color: #223348;
+}
+
+/* Safety: Dropdown sauber halten */
+#playerDropdown {
+  box-sizing: border-box;
 }
