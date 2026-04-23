@@ -1155,30 +1155,36 @@ thead th.sort-desc::after {
 
 .auction-controls {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   flex-wrap: wrap;
 }
 
-/* Spieler Input (größer) */
-#playerInput {
-  flex: 2;
-  min-width: 220px;
+/* WICHTIG: Override deiner globalen filter-container input Regel */
+.auction-controls input {
+  flex: none !important;
+  width: auto;
 }
 
-/* Bieter Input */
+/* Spieler Suche (größer, aber sauber begrenzt) */
+#playerInput {
+  flex: 2;
+  min-width: 260px;
+}
+
+/* Bieter */
 #bidderInput {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Betrag */
+#amountInput {
   flex: 1;
   min-width: 140px;
 }
 
-/* Betrag Input */
-#amountInput {
-  flex: 1;
-  min-width: 120px;
-}
-
-/* Buttons */
+/* Buttons fix */
 #bidBtn,
 #syncBtn {
   flex: 0 0 auto;
