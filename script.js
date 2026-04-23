@@ -5,12 +5,30 @@ const supabaseClient = window.supabase.createClient(
 
 let playersPool = [];
 
-// 💰 Format
+// 💰 Format Geld
 function formatMoney(amount) {
   return "$" + Number(amount || 0).toLocaleString("de-DE");
 }
 
+// ⏱️ NEU: Restzeit berechnen
+function formatTimeLeft(endTime) {
+  if (!endTime) return "-";
+
+  const now = new Date();
+  const end = new Date(endTime);
+  const diff = end - now;
+
+  if (diff <= 0) return "⛔ Abgelaufen";
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+  return `${hours}h ${minutes}m`;
+}
+
 // 🔄 Sleeper Sync
+document.getElementById("syncBtn").addEventListener("click", syncPlayers);
+
 async function syncPlayers() {
   const status = document.getElementById("status");
   status.innerText = "⏳ Lade Spieler...";
@@ -30,65 +48,54 @@ async function syncPlayers() {
       rosters.flatMap(r => r.players || [])
     );
 
-    playersPool = Object.values(players).filter(
+    const freeAgents = Object.values(players).filter(
       p => p.player_id && !rostered.has(p.player_id)
     );
 
-    status.innerText = "✅ " + playersPool.length + " Spieler geladen";
+    playersPool = freeAgents;
+
+    status.innerText = "✅ " + freeAgents.length + " Spieler geladen";
 
   } catch (err) {
-    console.error(err);
     status.innerText = "❌ Fehler beim Laden";
+    console.error(err);
   }
 }
 
 // 🔍 Autocomplete
-document.addEventListener("DOMContentLoaded", () => {
+const input = document.getElementById("playerInput");
+const dropdown = document.getElementById("playerDropdown");
 
-  const input = document.getElementById("playerInput");
-  const dropdown = document.getElementById("playerDropdown");
+input.addEventListener("input", () => {
+  const value = input.value.toLowerCase();
+  dropdown.innerHTML = "";
 
-  document.getElementById("syncBtn").addEventListener("click", syncPlayers);
-  document.getElementById("bidBtn").addEventListener("click", bid);
+  if (!value) return;
 
-  input.addEventListener("input", () => {
-    const value = input.value.toLowerCase();
-    dropdown.innerHTML = "";
+  const filtered = playersPool
+    .filter(p => p.full_name?.toLowerCase().includes(value))
+    .slice(0, 10);
 
-    if (!value) return;
+  filtered.forEach(player => {
+    const li = document.createElement("li");
+    li.innerText = `${player.full_name} - ${player.position} - ${player.team}`;
 
-    const filtered = playersPool
-      .filter(p =>
-        p.full_name?.toLowerCase().includes(value)
-      )
-      .slice(0, 10);
-
-    filtered.forEach(player => {
-      const li = document.createElement("li");
-
-      li.innerText =
-        `${player.full_name} - ${player.position || "?"} - ${player.team || "FA"}`;
-
-      li.style.padding = "6px";
-      li.style.cursor = "pointer";
-
-      li.addEventListener("click", () => {
-        input.value = player.full_name;
-        input.dataset.position = player.position;
-        input.dataset.team = player.team;
-        dropdown.innerHTML = "";
-      });
-
-      dropdown.appendChild(li);
-    });
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!input.contains(e.target)) {
+    li.addEventListener("click", () => {
+      input.value = player.full_name;
+      input.dataset.position = player.position;
+      input.dataset.team = player.team;
       dropdown.innerHTML = "";
-    }
-  });
+    });
 
+    dropdown.appendChild(li);
+  });
+});
+
+// Dropdown schließen
+document.addEventListener("click", (e) => {
+  if (!input.contains(e.target)) {
+    dropdown.innerHTML = "";
+  }
 });
 
 // 📊 Daten laden
@@ -100,6 +107,18 @@ async function loadPlayers() {
   if (error) {
     console.log("LOAD ERROR:", error);
     return;
+  }
+
+  // ⏱️ NEU: Ablauf prüfen
+  for (const p of data) {
+    if (p.status === "active" && p.end_time) {
+      if (new Date(p.end_time) < new Date()) {
+        await supabaseClient
+          .from("auction_players")
+          .update({ status: "finished" })
+          .eq("id", p.id);
+      }
+    }
   }
 
   renderTable(data);
@@ -118,6 +137,7 @@ function renderTable(players) {
         <td>${p.team || "-"}</td>
         <td>${formatMoney(p.current_bid)}</td>
         <td>${p.highest_bidder || "-"}</td>
+        <td>${formatTimeLeft(p.end_time)}</td>
       </tr>
     `;
   });
@@ -125,9 +145,6 @@ function renderTable(players) {
 
 // 💸 Bieten
 async function bid() {
-
-  const input = document.getElementById("playerInput");
-
   const playerName = input.value.trim();
   const bidderName = document.getElementById("bidderInput").value.trim();
   const amount = parseInt(document.getElementById("amountInput").value);
@@ -140,22 +157,27 @@ async function bid() {
     return;
   }
 
+  // ⏱️ NEU: 24h Timer setzen
+  const endTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
   const { data: existing } = await supabaseClient
     .from("auction_players")
     .select("*")
     .eq("player", playerName)
     .maybeSingle();
 
+  // 🆕 INSERT
   if (!existing) {
-
     const { error } = await supabaseClient
       .from("auction_players")
       .insert({
         player: playerName,
+        position,
+        team,
         current_bid: amount,
         highest_bidder: bidderName,
-        position: position,
-        team: team
+        end_time: endTime.toISOString(),
+        status: "active"
       });
 
     console.log("INSERT ERROR:", error);
@@ -167,20 +189,20 @@ async function bid() {
       return;
     }
 
+    // 🔄 UPDATE + TIMER RESET
     const { error } = await supabaseClient
       .from("auction_players")
       .update({
         current_bid: amount,
         highest_bidder: bidderName,
-        position: position,
-        team: team
+        end_time: endTime.toISOString()
       })
       .eq("id", existing.id);
 
     console.log("UPDATE ERROR:", error);
   }
 
-  // 🧹 Reset
+  // 🧹 Inputs leeren
   input.value = "";
   input.dataset.position = "";
   input.dataset.team = "";
@@ -190,6 +212,9 @@ async function bid() {
 
   input.focus();
 }
+
+// Button
+document.getElementById("bidBtn").addEventListener("click", bid);
 
 // 🔥 Realtime
 supabaseClient
@@ -201,12 +226,14 @@ supabaseClient
       schema: "public",
       table: "auction_players"
     },
-    () => loadPlayers()
+    () => {
+      loadPlayers();
+    }
   )
   .subscribe();
 
-// 🔁 Fallback
-setInterval(loadPlayers, 3000);
+// 🔁 Fallback Refresh
+setInterval(loadPlayers, 5000);
 
-// Start
+// 🚀 Start
 loadPlayers();
