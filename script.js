@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     filtered.forEach(player => {
       const li = document.createElement("li");
-      li.innerText = `${player.full_name} (${player.position})`;
+      li.innerText = `${player.full_name} • ${player.position} • ${player.team || "FA"}`;
 
       li.style.padding = "5px";
       li.style.cursor = "pointer";
