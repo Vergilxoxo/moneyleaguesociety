@@ -1217,3 +1217,6 @@ thead th.sort-desc::after {
   background-color: #223348;
 }
 
+.finished-row {
+  opacity: 0.7;
+}
