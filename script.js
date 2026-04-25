@@ -223,7 +223,7 @@ if (!existing) {
 
   // ❌ Mindestgebot prüfen
   if (amount < 500000) {
-    alert("Mindestgebot beträgt 500.000");
+    alert("Mindestgebot beträgt $500.000");
     return;
   }
 
