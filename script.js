@@ -170,7 +170,7 @@ async function bid() {
     return;
   }
 
-  // ⏱️ NEU: 24h Timer setzen
+  // ⏱️ 24h Timer
   const endTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   const { data: existing } = await supabaseClient
@@ -197,6 +197,15 @@ async function bid() {
 
   } else {
 
+    // ❌ NEU: Ablauf + Status prüfen
+    const isExpired = new Date(existing.end_time) < new Date();
+
+    if (existing.status === "finished" || isExpired) {
+      alert("Diese Auktion ist bereits beendet");
+      return;
+    }
+
+    // ❌ zu niedrig
     if (amount <= existing.current_bid) {
       alert("Gebot muss höher sein als " + existing.current_bid);
       return;
