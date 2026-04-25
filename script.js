@@ -250,7 +250,7 @@ async function bid() {
   input.dataset.position = "";
   input.dataset.team = "";
 
-  document.getElementById("bidderInput").value = "";
+  document.getElementById("bidderInput").selectedIndex = 0;
   document.getElementById("amountInput").value = "";
 }
 
