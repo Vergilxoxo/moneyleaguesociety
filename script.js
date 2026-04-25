@@ -10,6 +10,16 @@ function formatMoney(amount) {
   return "$" + Number(amount || 0).toLocaleString("de-DE");
 }
 
+function parseMoney(value) {
+  if (!value) return NaN;
+
+  return parseInt(
+    value
+      .replace(/\./g, "")   // Punkte entfernen (1.000.000 → 1000000)
+      .replace(/,/g, "")    // optional: Kommas entfernen
+  );
+}
+
 // ⏱️ NEU: Restzeit berechnen
 function formatTimeLeft(endTime) {
   if (!endTime) return "-";
@@ -198,7 +208,8 @@ function renderTable(players) {
 async function bid() {
   const playerName = input.value.trim();
   const bidderName = document.getElementById("bidderInput").value.trim();
-  const amount = parseInt(document.getElementById("amountInput").value);
+  const rawAmount = document.getElementById("amountInput").value;
+  const amount = parseMoney(rawAmount);
 
   const playerId = input.dataset.playerId;
   const position = input.dataset.position;
