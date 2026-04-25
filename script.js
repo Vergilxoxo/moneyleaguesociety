@@ -238,6 +238,12 @@ if (!existing) {
     return;
   }
 
+  // ❌ Selbstüberbieten verhindern
+  if (existing && existing.highest_bidder === bidderName) {
+    alert("Du bist bereits Höchstbietender!");
+    return;
+  }
+  
   const { error } = await supabaseClient
     .from("auction_players")
     .insert({
