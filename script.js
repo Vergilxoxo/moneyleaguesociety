@@ -50,7 +50,7 @@ async function syncPlayers(auto = false) {
   btn.classList.remove("success", "error");
   btn.classList.add("loading");
   btn.innerText = "Lade...";
-  status.innerText = "⏳ Spieler werden geladen...";
+
 
   const LEAGUE_ID = "1311998228123643904";
 
@@ -78,7 +78,7 @@ async function syncPlayers(auto = false) {
     btn.classList.add("success");
     btn.innerText = "Spieler geladen";
 
-    status.innerText = `✅ ${freeAgents.length} Spieler geladen`;
+
 
   } catch (err) {
     console.error(err);
@@ -88,7 +88,6 @@ async function syncPlayers(auto = false) {
     btn.classList.add("error");
     btn.innerText = "Fehler";
 
-    status.innerText = "❌ Fehler beim Laden";
   }
 }
 
