@@ -1227,3 +1227,16 @@ thead th.sort-desc::after {
 .finished-row {
   opacity: 0.7;
 }
+
+/* Player Loading*/
+#syncBtn.loading {
+  background-color: #ffa500; /* orange */
+}
+
+#syncBtn.success {
+  background-color: #4caf50; /* grün */
+}
+
+#syncBtn.error {
+  background-color: #ff4d4d; /* rot */
+}
