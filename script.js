@@ -42,9 +42,15 @@ function formatTimeLeft(endTime) {
 // 🔄 Sleeper Sync
 document.getElementById("syncBtn").addEventListener("click", syncPlayers);
 
-async function syncPlayers() {
+async function syncPlayers(auto = false) {
   const status = document.getElementById("status");
-  status.innerText = "⏳ Lade Spieler...";
+  const btn = document.getElementById("syncBtn");
+
+  // 🔄 UI Zustand: Laden
+  btn.classList.remove("success", "error");
+  btn.classList.add("loading");
+  btn.innerText = "Lade...";
+  status.innerText = "⏳ Spieler werden geladen...";
 
   const LEAGUE_ID = "1311998228123643904";
 
@@ -67,11 +73,22 @@ async function syncPlayers() {
 
     playersPool = freeAgents;
 
-    status.innerText = "✅ " + freeAgents.length + " Spieler geladen";
+    // ✅ UI Erfolg
+    btn.classList.remove("loading");
+    btn.classList.add("success");
+    btn.innerText = "Spieler geladen";
+
+    status.innerText = `✅ ${freeAgents.length} Spieler geladen`;
 
   } catch (err) {
-    status.innerText = "❌ Fehler beim Laden";
     console.error(err);
+
+    // ❌ UI Fehler
+    btn.classList.remove("loading");
+    btn.classList.add("error");
+    btn.innerText = "Fehler";
+
+    status.innerText = "❌ Fehler beim Laden";
   }
 }
 
@@ -278,3 +295,6 @@ setInterval(loadPlayers, 5000);
 
 // 🚀 Start
 loadPlayers();
+
+// 🔥 AUTO LOAD PLAYER POOL
+syncPlayers(true);
