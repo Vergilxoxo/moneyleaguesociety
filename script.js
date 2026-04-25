@@ -229,18 +229,11 @@ async function bid() {
     .maybeSingle();
 
   // 🆕 INSERT
-  // 🆕 INSERT
 if (!existing) {
 
   // ❌ Mindestgebot prüfen
   if (amount < 500000) {
     alert("Mindestgebot beträgt $500.000");
-    return;
-  }
-
-  // ❌ Selbstüberbieten verhindern
-  if (existing && existing.highest_bidder === bidderName) {
-    alert("Du bist bereits Höchstbietender!");
     return;
   }
   
@@ -260,6 +253,12 @@ if (!existing) {
   console.log("INSERT ERROR:", error);
 
 } else {
+
+  // ❌ Selbstüberbieten verhindern
+  if (existing && existing.highest_bidder === bidderName) {
+    alert("Du bist bereits Höchstbietender!");
+    return;
+  }
 
   const isExpired = new Date(existing.end_time) < new Date();
 
