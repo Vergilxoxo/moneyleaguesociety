@@ -139,20 +139,41 @@ async function loadPlayers() {
 
 // 🎨 Tabelle
 function renderTable(players) {
-  const table = document.getElementById("playersTable");
-  table.innerHTML = "";
+  const activeTable = document.getElementById("playersTable");
+  const finishedTable = document.getElementById("finishedPlayersTable");
+
+  activeTable.innerHTML = "";
+  finishedTable.innerHTML = "";
 
   players.forEach(p => {
-    table.innerHTML += `
-      <tr>
-        <td>${p.player}</td>
-        <td>${p.position || "-"}</td>
-        <td>${p.team || "-"}</td>
-        <td>${formatMoney(p.current_bid)}</td>
-        <td>${p.highest_bidder || "-"}</td>
-        <td>${formatTimeLeft(p.end_time)}</td>
-      </tr>
-    `;
+
+    // 🟢 AKTIVE AUKTION
+    if (p.status !== "finished") {
+      activeTable.innerHTML += `
+        <tr>
+          <td>${p.player}</td>
+          <td>${p.position || "-"}</td>
+          <td>${p.team || "-"}</td>
+          <td>${formatMoney(p.current_bid)}</td>
+          <td>${p.highest_bidder || "-"}</td>
+          <td>${formatTimeLeft(p.end_time)}</td>
+        </tr>
+      `;
+    }
+
+    // 🔴 VERKAUFT
+    if (p.status === "finished") {
+      finishedTable.innerHTML += `
+        <tr>
+          <td>${p.player}</td>
+          <td>${p.position || "-"}</td>
+          <td>${p.team || "-"}</td>
+          <td>${formatMoney(p.current_bid)}</td>
+          <td>${p.highest_bidder || "-"}</td>
+        </tr>
+      `;
+    }
+
   });
 }
 
