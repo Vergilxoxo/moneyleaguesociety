@@ -95,6 +95,7 @@ input.addEventListener("input", () => {
 
     li.addEventListener("click", () => {
       input.value = player.full_name;
+      input.dataset.playerId = player.player_id; // Player ID Unique
       input.dataset.position = player.position;
       input.dataset.team = player.team;
       dropdown.innerHTML = "";
@@ -183,21 +184,21 @@ async function bid() {
   const bidderName = document.getElementById("bidderInput").value.trim();
   const amount = parseInt(document.getElementById("amountInput").value);
 
+  const playerId = input.dataset.playerId;
   const position = input.dataset.position;
   const team = input.dataset.team;
 
-  if (!playerName || !bidderName || !amount) {
-    alert("Bitte alle Felder ausfüllen");
+  if (!playerName || !bidderName || !amount || !playerId) {
+    alert("Bitte Spieler aus der Liste wählen!");
     return;
   }
 
-  // ⏱️ 24h Timer
   const endTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   const { data: existing } = await supabaseClient
     .from("auction_players")
     .select("*")
-    .eq("player", playerName)
+    .eq("player_id", playerId)
     .maybeSingle();
 
   // 🆕 INSERT
@@ -205,6 +206,7 @@ async function bid() {
     const { error } = await supabaseClient
       .from("auction_players")
       .insert({
+        player_id: playerId,
         player: playerName,
         position,
         team,
@@ -218,21 +220,18 @@ async function bid() {
 
   } else {
 
-    // ❌ NEU: Ablauf + Status prüfen
     const isExpired = new Date(existing.end_time) < new Date();
 
     if (existing.status === "finished" || isExpired) {
-      alert("Diese Auktion ist bereits beendet");
+      alert("Diese Auktion ist beendet");
       return;
     }
 
-    // ❌ zu niedrig
     if (amount <= existing.current_bid) {
       alert("Gebot muss höher sein als " + existing.current_bid);
       return;
     }
 
-    // 🔄 UPDATE + TIMER RESET
     const { error } = await supabaseClient
       .from("auction_players")
       .update({
@@ -240,20 +239,19 @@ async function bid() {
         highest_bidder: bidderName,
         end_time: endTime.toISOString()
       })
-      .eq("id", existing.id);
+      .eq("player_id", playerId);
 
     console.log("UPDATE ERROR:", error);
   }
 
-  // 🧹 Inputs leeren
+  // Reset
   input.value = "";
+  input.dataset.playerId = "";
   input.dataset.position = "";
   input.dataset.team = "";
 
   document.getElementById("bidderInput").value = "";
   document.getElementById("amountInput").value = "";
-
-  input.focus();
 }
 
 // Button
