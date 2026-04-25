@@ -218,48 +218,56 @@ async function bid() {
     .maybeSingle();
 
   // 🆕 INSERT
-  if (!existing) {
-    const { error } = await supabaseClient
-      .from("auction_players")
-      .insert({
-        player_id: playerId,
-        player: playerName,
-        position,
-        team,
-        current_bid: amount,
-        highest_bidder: bidderName,
-        end_time: endTime.toISOString(),
-        status: "active"
-      });
+  // 🆕 INSERT
+if (!existing) {
 
-    console.log("INSERT ERROR:", error);
-
-  } else {
-
-    const isExpired = new Date(existing.end_time) < new Date();
-
-    if (existing.status === "finished" || isExpired) {
-      alert("Diese Auktion ist beendet");
-      return;
-    }
-
-    if (amount <= existing.current_bid) {
-      alert("Gebot muss höher sein als " + existing.current_bid);
-      return;
-    }
-
-    const { error } = await supabaseClient
-      .from("auction_players")
-      .update({
-        current_bid: amount,
-        highest_bidder: bidderName,
-        end_time: endTime.toISOString()
-      })
-      .eq("player_id", playerId);
-
-    console.log("UPDATE ERROR:", error);
+  // ❌ Mindestgebot prüfen
+  if (amount < 500000) {
+    alert("Mindestgebot beträgt 500.000");
+    return;
   }
 
+  const { error } = await supabaseClient
+    .from("auction_players")
+    .insert({
+      player_id: playerId,
+      player: playerName,
+      position,
+      team,
+      current_bid: amount,
+      highest_bidder: bidderName,
+      end_time: endTime.toISOString(),
+      status: "active"
+    });
+
+  console.log("INSERT ERROR:", error);
+
+} else {
+
+  const isExpired = new Date(existing.end_time) < new Date();
+
+  if (existing.status === "finished" || isExpired) {
+    alert("Diese Auktion ist beendet");
+    return;
+  }
+
+  // ❌ Mindest-Erhöhung prüfen
+  if (amount < existing.current_bid + 100000) {
+    alert(`Gebot muss mindestens ${formatMoney(existing.current_bid + 100000)} sein`);
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("auction_players")
+    .update({
+      current_bid: amount,
+      highest_bidder: bidderName,
+      end_time: endTime.toISOString()
+    })
+    .eq("player_id", playerId);
+
+  console.log("UPDATE ERROR:", error);
+}
   // Reset
   input.value = "";
   input.dataset.playerId = "";
