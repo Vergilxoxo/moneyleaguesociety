@@ -15,8 +15,9 @@ function parseMoney(value) {
 
   return parseInt(
     value
-      .replace(/\./g, "")   // Punkte entfernen (1.000.000 → 1000000)
-      .replace(/,/g, "")    // optional: Kommas entfernen
+      .replace(/\$/g, "")  // $ entfernen
+      .replace(/\./g, "")  // Punkte entfernen
+      .replace(/,/g, "")   // Kommas entfernen (Safety)
   );
 }
 
@@ -138,7 +139,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Format Input Amount
+// Input Event Listener
 const amountInput = document.getElementById("amountInput");
 
 amountInput.addEventListener("input", (e) => {
@@ -152,10 +153,14 @@ amountInput.addEventListener("input", (e) => {
     return;
   }
 
-  // Zahl formatieren (500000 -> 500.000)
-  const formatted = Number(value).toLocaleString("de-DE");
+  // 👉 WICHTIG: als Number behandeln
+  const numberValue = parseInt(value, 10);
 
-  e.target.value = formatted;
+  // 👉 Deutsche Formatierung (Punkte!)
+  const formatted = numberValue.toLocaleString("de-DE");
+
+  // 👉 Mit Dollar anzeigen
+  e.target.value = "$" + formatted;
 });
 
 // 📊 Daten laden
