@@ -138,6 +138,26 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// Format Input Amount
+const amountInput = document.getElementById("amountInput");
+
+amountInput.addEventListener("input", (e) => {
+  let value = e.target.value;
+
+  // Alles außer Zahlen entfernen
+  value = value.replace(/\D/g, "");
+
+  if (!value) {
+    e.target.value = "";
+    return;
+  }
+
+  // Zahl formatieren (500000 -> 500.000)
+  const formatted = Number(value).toLocaleString("de-DE");
+
+  e.target.value = formatted;
+});
+
 // 📊 Daten laden
 async function loadPlayers() {
   const { data, error } = await supabaseClient
