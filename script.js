@@ -149,16 +149,25 @@ async function loadPlayers() {
     return;
   }
 
-  // ⏱️ NEU: Ablauf prüfen
+  let needsReload = false;
+
+  // ⏱️ Ablauf prüfen
   for (const p of data) {
     if (p.status === "active" && p.end_time) {
       if (new Date(p.end_time) < new Date()) {
         await supabaseClient
           .from("auction_players")
           .update({ status: "finished" })
-          .eq("id", p.id);
+          .eq("player_id", p.player_id);
+
+        needsReload = true;
       }
     }
+  }
+
+  // 🔁 WICHTIG: neu laden wenn Updates passiert sind
+  if (needsReload) {
+    return loadPlayers();
   }
 
   renderTable(data);
