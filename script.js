@@ -4,6 +4,23 @@ const supabaseClient = window.supabase.createClient(
 );
 
 let playersPool = [];
+let ownerBudgets = {};
+
+// Owner Map
+const ownerMap = {
+  "1": "Ralf",
+  "2": "TitleTownPat",
+  "3": "MrNilsson",
+  "4": "kleinerlouis",
+  "5": "Ulle",
+  "6": "TST1860",
+  "7": "brab97",
+  "8": "Himp84",
+  "9": "TobiWalonso",
+  "10": "49erflo",
+  "11": "Heesy",
+  "12": "CrazyGringo"
+};
 
 // 💰 Format Geld
 function formatMoney(amount) {
@@ -15,13 +32,114 @@ function parseMoney(value) {
 
   return parseInt(
     value
-      .replace(/\$/g, "")  // $ entfernen
-      .replace(/\./g, "")  // Punkte entfernen
-      .replace(/,/g, "")   // Kommas entfernen (Safety)
+      .replace(/\$/g, "")
+      .replace(/\./g, "")
+      .replace(/,/g, "")
   );
 }
 
-// ⏱️ NEU: Restzeit berechnen
+const parseValue = str => {
+  if (!str) return 0;
+  const num = str.toString().replace(/[^0-9]/g, "");
+  return parseInt(num) || 0;
+};
+
+// ----------------------------
+// Datenquellen
+async function fetchSheetPlayers() {
+  const res = await fetch("https://opensheet.elk.sh/1TmZedqXNrEZ-LtPxma7AemFsKOoHErFgZhjIOK3C0hc/Sheet1");
+  return await res.json();
+}
+
+async function fetchCutSheet() {
+  const res = await fetch("https://opensheet.elk.sh/1TmZedqXNrEZ-LtPxma7AemFsKOoHErFgZhjIOK3C0hc/CutSheet");
+  return await res.json();
+}
+
+async function fetchRosters() {
+  const res = await fetch("https://api.sleeper.app/v1/league/1311998228123643904/rosters");
+  return await res.json();
+}
+
+// ----------------------------
+// Budget laden
+async function loadOwnerBudgets() {
+  const sheetData = await fetchSheetPlayers();
+  const cutSheetData = await fetchCutSheet();
+  const rosters = await fetchRosters();
+
+  const teamCap = 160000000;
+
+  const allYears = sheetData.flatMap(p =>
+    Object.keys(p).filter(k => /^\d{4}$/.test(k))
+  );
+
+  const year = [...new Set(allYears)].sort()[0] || "2025";
+
+  ownerBudgets = {};
+
+  rosters.forEach(roster => {
+    const owner = ownerMap[String(roster.roster_id)];
+    if (!owner) return;
+
+    const allIds = (roster.players || []).map(String);
+    const taxiIds = (roster.taxi || []).map(String);
+    const irIds = (roster.reserve || []).map(String);
+
+    const activeIds = allIds.filter(id =>
+      !taxiIds.includes(id) && !irIds.includes(id)
+    );
+
+    const activePlayers = activeIds
+      .map(id => sheetData.find(p => String(p["Player ID"]) === id))
+      .filter(Boolean);
+
+    const deadCapPlayers = cutSheetData.filter(p => p.Owner === owner);
+
+    const sumForYear = players =>
+      players.reduce((sum, p) => sum + parseValue(p[year]), 0);
+
+    const capSpace =
+      teamCap -
+      sumForYear(activePlayers) -
+      sumForYear(deadCapPlayers);
+
+    ownerBudgets[owner] = capSpace;
+  });
+
+  console.log("OWNER BUDGETS:", ownerBudgets);
+}
+
+// ----------------------------
+// Verfügbares Budget berechnen
+async function getRemainingBudget(owner) {
+  if (!ownerBudgets[owner]) {
+    await loadOwnerBudgets();
+  }
+
+  const baseBudget = ownerBudgets[owner] || 0;
+
+  const { data, error } = await supabaseClient
+    .from("auction_players")
+    .select("current_bid, highest_bidder, status")
+    .eq("highest_bidder", owner);
+
+  if (error) {
+    console.log("BUDGET ERROR:", error);
+    return baseBudget;
+  }
+
+  const committed = (data || []).reduce((sum, p) => {
+    if (p.status === "active" || p.status === "finished") {
+      return sum + Number(p.current_bid || 0);
+    }
+    return sum;
+  }, 0);
+
+  return baseBudget - committed;
+}
+
+// ⏱️ Restzeit berechnen
 function formatTimeLeft(endTime) {
   if (!endTime) return "-";
 
@@ -36,17 +154,14 @@ function formatTimeLeft(endTime) {
 
   const timeString = `${hours}h ${minutes}m`;
 
-  // 🔴 < 1 Stunde
   if (diff < 60 * 60 * 1000) {
     return `<span style="color:#ff4d4d; font-weight:600;">🔴 ${timeString}</span>`;
   }
 
-  // 🟠 < 6 Stunden
   if (diff < 6 * 60 * 60 * 1000) {
     return `<span style="color:#ffa500; font-weight:600;">🟠 ${timeString}</span>`;
   }
 
-  // 🟢 >= 6 Stunden
   return `<span style="color:#4caf50;">🟢 ${timeString}</span>`;
 }
 
@@ -54,14 +169,11 @@ function formatTimeLeft(endTime) {
 document.getElementById("syncBtn").addEventListener("click", syncPlayers);
 
 async function syncPlayers(auto = false) {
-  const status = document.getElementById("status");
   const btn = document.getElementById("syncBtn");
 
-  // 🔄 UI Zustand: Laden
   btn.classList.remove("success", "error");
   btn.classList.add("loading");
   btn.innerText = "Lade...";
-
 
   const LEAGUE_ID = "1311998228123643904";
 
@@ -78,27 +190,20 @@ async function syncPlayers(auto = false) {
       rosters.flatMap(r => r.players || [])
     );
 
-    const freeAgents = Object.values(players).filter(
+    playersPool = Object.values(players).filter(
       p => p.player_id && !rostered.has(p.player_id)
     );
 
-    playersPool = freeAgents;
-
-    // ✅ UI Erfolg
     btn.classList.remove("loading");
     btn.classList.add("success");
     btn.innerText = "Spieler geladen";
 
-
-
   } catch (err) {
     console.error(err);
 
-    // ❌ UI Fehler
     btn.classList.remove("loading");
     btn.classList.add("error");
     btn.innerText = "Fehler";
-
   }
 }
 
@@ -118,13 +223,13 @@ input.addEventListener("input", () => {
 
   filtered.forEach(player => {
     const li = document.createElement("li");
-    li.innerText = `${player.full_name} - ${player.position} - ${player.team}`;
+    li.innerText = `${player.full_name} - ${player.position} - ${player.team || "FA"}`;
 
     li.addEventListener("click", () => {
       input.value = player.full_name;
-      input.dataset.playerId = player.player_id; // Player ID Unique
+      input.dataset.playerId = player.player_id;
       input.dataset.position = player.position;
-      input.dataset.team = player.team;
+      input.dataset.team = player.team || "FA";
       dropdown.innerHTML = "";
     });
 
@@ -132,35 +237,25 @@ input.addEventListener("input", () => {
   });
 });
 
-// Dropdown schließen
 document.addEventListener("click", (e) => {
   if (!input.contains(e.target)) {
     dropdown.innerHTML = "";
   }
 });
 
-// Input Event Listener
+// 💵 Money Input
 const amountInput = document.getElementById("amountInput");
 
 amountInput.addEventListener("input", (e) => {
-  let value = e.target.value;
-
-  // Alles außer Zahlen entfernen
-  value = value.replace(/\D/g, "");
+  let value = e.target.value.replace(/\D/g, "");
 
   if (!value) {
     e.target.value = "";
     return;
   }
 
-  // 👉 WICHTIG: als Number behandeln
   const numberValue = parseInt(value, 10);
-
-  // 👉 Deutsche Formatierung (Punkte!)
-  const formatted = numberValue.toLocaleString("de-DE");
-
-  // 👉 Mit Dollar anzeigen
-  e.target.value = "$" + formatted;
+  e.target.value = "$" + numberValue.toLocaleString("de-DE");
 });
 
 // 📊 Daten laden
@@ -176,7 +271,6 @@ async function loadPlayers() {
 
   let needsReload = false;
 
-  // ⏱️ Ablauf prüfen
   for (const p of data) {
     if (p.status === "active" && p.end_time) {
       if (new Date(p.end_time) < new Date()) {
@@ -190,7 +284,6 @@ async function loadPlayers() {
     }
   }
 
-  // 🔁 WICHTIG: neu laden wenn Updates passiert sind
   if (needsReload) {
     return loadPlayers();
   }
@@ -198,7 +291,7 @@ async function loadPlayers() {
   renderTable(data);
 }
 
-// 🎨 Tabelle
+// 🎨 Tabellen rendern
 function renderTable(players) {
   const activeTable = document.getElementById("playersTable");
   const finishedTable = document.getElementById("finishedPlayersTable");
@@ -207,8 +300,6 @@ function renderTable(players) {
   finishedTable.innerHTML = "";
 
   players.forEach(p => {
-
-    // 🟢 AKTIVE AUKTION
     if (p.status !== "finished") {
       activeTable.innerHTML += `
         <tr>
@@ -222,7 +313,6 @@ function renderTable(players) {
       `;
     }
 
-    // 🔴 VERKAUFT
     if (p.status === "finished") {
       finishedTable.innerHTML += `
         <tr>
@@ -234,7 +324,6 @@ function renderTable(players) {
         </tr>
       `;
     }
-
   });
 }
 
@@ -254,6 +343,13 @@ async function bid() {
     return;
   }
 
+  const remainingBudget = await getRemainingBudget(bidderName);
+
+  if (amount > remainingBudget) {
+    alert(`Nicht genug Budget! Verfügbar: ${formatMoney(remainingBudget)}`);
+    return;
+  }
+
   const endTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   const { data: existing } = await supabaseClient
@@ -262,63 +358,57 @@ async function bid() {
     .eq("player_id", playerId)
     .maybeSingle();
 
-  // 🆕 INSERT
-if (!existing) {
+  if (!existing) {
+    if (amount < 500000) {
+      alert("Mindestgebot beträgt $500.000");
+      return;
+    }
 
-  // ❌ Mindestgebot prüfen
-  if (amount < 500000) {
-    alert("Mindestgebot beträgt $500.000");
-    return;
+    const { error } = await supabaseClient
+      .from("auction_players")
+      .insert({
+        player_id: playerId,
+        player: playerName,
+        position,
+        team,
+        current_bid: amount,
+        highest_bidder: bidderName,
+        end_time: endTime.toISOString(),
+        status: "active"
+      });
+
+    console.log("INSERT ERROR:", error);
+
+  } else {
+    if (existing.highest_bidder === bidderName) {
+      alert("Du bist bereits Höchstbietender!");
+      return;
+    }
+
+    const isExpired = new Date(existing.end_time) < new Date();
+
+    if (existing.status === "finished" || isExpired) {
+      alert("Diese Auktion ist beendet");
+      return;
+    }
+
+    if (amount < existing.current_bid + 100000) {
+      alert(`Gebot muss mindestens ${formatMoney(existing.current_bid + 100000)} sein`);
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("auction_players")
+      .update({
+        current_bid: amount,
+        highest_bidder: bidderName,
+        end_time: endTime.toISOString()
+      })
+      .eq("player_id", playerId);
+
+    console.log("UPDATE ERROR:", error);
   }
-  
-  const { error } = await supabaseClient
-    .from("auction_players")
-    .insert({
-      player_id: playerId,
-      player: playerName,
-      position,
-      team,
-      current_bid: amount,
-      highest_bidder: bidderName,
-      end_time: endTime.toISOString(),
-      status: "active"
-    });
 
-  console.log("INSERT ERROR:", error);
-
-} else {
-
-  // ❌ Selbstüberbieten verhindern
-  if (existing && existing.highest_bidder === bidderName) {
-    alert("Du bist bereits Höchstbietender!");
-    return;
-  }
-
-  const isExpired = new Date(existing.end_time) < new Date();
-
-  if (existing.status === "finished" || isExpired) {
-    alert("Diese Auktion ist beendet");
-    return;
-  }
-
-  // ❌ Mindest-Erhöhung prüfen
-  if (amount < existing.current_bid + 100000) {
-    alert(`Gebot muss mindestens ${formatMoney(existing.current_bid + 100000)} sein`);
-    return;
-  }
-
-  const { error } = await supabaseClient
-    .from("auction_players")
-    .update({
-      current_bid: amount,
-      highest_bidder: bidderName,
-      end_time: endTime.toISOString()
-    })
-    .eq("player_id", playerId);
-
-  console.log("UPDATE ERROR:", error);
-}
-  // Reset
   input.value = "";
   input.dataset.playerId = "";
   input.dataset.position = "";
@@ -352,6 +442,5 @@ setInterval(loadPlayers, 5000);
 
 // 🚀 Start
 loadPlayers();
-
-// 🔥 AUTO LOAD PLAYER POOL
+loadOwnerBudgets();
 syncPlayers(true);
