@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Time Records</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="nav-logo">Dashboard</a>
+    <a href="roster.html" class="nav-link">Roster</a>
+    <a href="undrafted-taxi.html" class="nav-link">UDFA</a>
+    <a href="players.html" class="nav-link">Spielerliste</a>
+
+    <!-- Dropdown -->
+    <div class="dropdown">
+      <button class="dropbtn">League ▾</button>
+      <div class="dropdown-content">
+        <a href="transactions.html">Transactions</a>
+        <a href="statpage.html">Fantasy Stats</a>
+        <a href="records.html">League Records</a>
+        <a href="hof.html">Hall of Fame</a>
+      </div>
+    </div>
+
+    <a href="salary.html" class="nav-link">Salary</a>
+    <a href="rulebook.html" class="nav-link">Regelwerk</a>
+  </div>
+</nav>
+    
+<div class="league-container">
+  <div class="league-header">
+    <h1>All Time Records</h1>
+  </div>
+
+  <div class="records-cards-grid">
+
+  <!-- All Time High -->
+  <div class="records-card records-ranking" id="records-high">
+    <div class="records-card-header">Highest Weekly Scores</div>
+    <div class="records-table">
+      <div class="records-header">
+        <span>#</span>
+        <span>Manager</span>
+        <span>Week</span>
+        <span>Points</span>
+      </div>
+      <div id="records-list-high"></div>
+    </div>
+  </div>
+
+  <!-- Lowest Week -->
+  <div class="records-card records-ranking" id="records-low">
+    <div class="records-card-header">Lowest Weekly Scores</div>
+    <div class="records-table">
+      <div class="records-header">
+        <span>#</span>
+        <span>Manager</span>
+        <span>Week</span>
+        <span>Points</span>
+      </div>
+      <div id="records-list-low"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+const leagueIds = {
+  "2026":"1311998228123643904",
+  "2025":"1207768406841892864",
+  "2024":"1042445037713334272"
+};
+
+// Owner Map (Roster → Owner)
+const ownerMap = {
+  "1": "Ralf",
+  "2": "TitleTownPat",
+  "3": "MrNilsson",
+  "4": "kleinerlouis",
+  "5": "Ulle",
+  "6": "TST1860",
+  "7": "brab97",
+  "8": "Himp84",
+  "9": "TobiWalonso",
+  "10": "49erflo",
+  "11": "Heesy",
+  "12": "CrazyGringo"
+};
+
+async function fetchWeekMatchups(leagueId, week) {
+  const res = await fetch(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`);
+  return res.json();
+}
+
+async function getAllRecords() {
+
+  const allRecords = [];
+
+  for (const year in leagueIds) {
+
+    const leagueId = leagueIds[year];
+
+    for (let week = 1; week <= 14; week++) {
+
+      try {
+
+        const matchups = await fetchWeekMatchups(leagueId, week);
+
+        if (!matchups || matchups.length === 0) continue;
+
+        matchups.forEach(team => {
+
+          const owner = ownerMap[team.roster_id] || "Unknown";
+
+          allRecords.push({
+            owner: owner,
+            points: team.points || 0,
+            week: week,
+            year: year
+          });
+
+        });
+
+      } catch (err) {
+        console.error("Week error", week, err);
+      }
+
+    }
+
+  }
+
+  // Sortieren nach Punkten
+  allRecords.sort((a,b) => b.points - a.points);
+
+  return allRecords.slice(0,10);
+
+}
+
+async function getAllRecords() {
+  const allRecords = [];
+
+  for (const year in leagueIds) {
+    const leagueId = leagueIds[year];
+
+    for (let week = 1; week <= 14; week++) {
+      try {
+        const matchups = await fetchWeekMatchups(leagueId, week);
+        if (!matchups || matchups.length === 0) continue;
+
+        matchups.forEach(team => {
+          const owner = ownerMap[team.roster_id] || "Unknown";
+
+          allRecords.push({
+            owner: owner,
+            points: team.points || 0,
+            week: week,
+            year: year
+          });
+        });
+      } catch (err) {
+        console.error("Week error", week, err);
+      }
+    }
+  }
+
+  // **Nicht schneiden – alle Werte zurückgeben**
+  return allRecords;
+}
+  
+async function renderRecordsDual() {
+  const records = await getAllRecords();
+
+  const highList = document.getElementById("records-list-high");
+  const lowList = document.getElementById("records-list-low");
+
+  highList.innerHTML = "";
+  lowList.innerHTML = "";
+
+  // Top 10 High Scores
+  const topRecords = [...records].sort((a,b) => b.points - a.points).slice(0,10);
+  topRecords.forEach((r, index) => {
+    const row = document.createElement("div");
+    row.className = "record-row";
+    row.innerHTML = `
+      <span class="rank">${index + 1}</span>
+      <span class="owner">${r.owner}</span>
+      <span class="week">W${r.week} • ${r.year}</span>
+      <span class="points">${r.points.toFixed(2)}</span>
+    `;
+    highList.appendChild(row);
+  });
+
+  // Top 10 Low Scores
+  const lowRecords = [...records].sort((a,b) => a.points - b.points).slice(0,10);
+  lowRecords.forEach((r, index) => {
+    const row = document.createElement("div");
+    row.className = "record-row";
+    row.innerHTML = `
+      <span class="rank">${index + 1}</span>
+      <span class="owner">${r.owner}</span>
+      <span class="week">W${r.week} • ${r.year}</span>
+      <span class="points">${r.points.toFixed(2)}</span>
+    `;
+    lowList.appendChild(row);
+  });
+}
+  
+renderRecordsDual();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>League Stats</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- Navigation -->
+  <nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="nav-logo">Dashboard</a>
+    <a href="roster.html" class="nav-link">Roster</a>
+    <a href="undrafted-taxi.html" class="nav-link">UDFA</a>
+    <a href="players.html" class="nav-link">Spielerliste</a>
+
+    <!-- Dropdown -->
+    <div class="dropdown">
+      <button class="dropbtn">League ▾</button>
+      <div class="dropdown-content">
+        <a href="transactions.html">Transactions</a>
+        <a href="statpage.html">Fantasy Stats</a>
+        <a href="records.html">League Records</a>
+        <a href="hof.html">Hall of Fame</a>
+      </div>
+    </div>
+
+    <a href="salary.html" class="nav-link">Salary</a>
+    <a href="rulebook.html" class="nav-link">Regelwerk</a>
+  </div>
+</nav>
+
+<h1>League Stats</h1>
+
+  <!-- SEASON RECORDS PANEL -->
+<div id="season-records" style="margin:20px 0;">
+  <div id="records-content"></div>
+</div>
+  
+<!-- FILTER -->
+<div class="filter-container">
+
+  <select id="season-select" onchange="changeSeason()">
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+  </select>
+
+  <input type="text" id="playerSearch" placeholder="Spieler suchen..." oninput="renderTable()">
+
+  <select id="roster-select" onchange="renderTable()">
+    <option value="ALL">Alle Manager</option>
+    <option value="1">Ralf</option>
+    <option value="2">TitleTownPat</option>
+    <option value="3">MrNilsson</option>
+    <option value="4">kleinerlouis</option>
+    <option value="5">Ulle</option>
+    <option value="6">TST1860</option>
+    <option value="7">brab97</option>
+    <option value="8">Himp84</option>
+    <option value="9">TobiWalonso</option>
+    <option value="10">49erflo</option>
+    <option value="11">Heesy</option>
+    <option value="12">CrazyGringo</option>
+  </select>
+
+  <select id="positionFilter" onchange="renderTable()">
+    <option value="ALL">Alle Positionen</option>
+    <option value="QB">QB</option>
+    <option value="RB">RB</option>
+    <option value="WR">WR</option>
+    <option value="TE">TE</option>
+    <option value="K">K</option>
+    <option value="DL">DL</option>
+    <option value="LB">LB</option>
+    <option value="DB">DB</option>
+  </select>
+
+</div>
+
+<!-- TABLE -->
+<div id="status"></div>
+<table>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Player</th>
+      <th>Team</th>
+      <th>Pos</th>
+      <th>Points</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+const seasonWeeks = 18;
+
+const leagueIds = {
+  "2026":"1311998228123643904",
+  "2025":"1207768406841892864",
+  "2024":"1042445037713334272"
+};
+
+let leagueId;
+let leaderboardData = [];
+let playersData = null;
+let playerRoster = {};
+
+function normalizePosition(pos){
+  if(pos==="DE"||pos==="DT") return "DL";
+  if(pos==="CB"||pos==="S"||pos==="SS") return "DB";
+  return pos;
+}
+
+function changeSeason(){
+  const season = document.getElementById("season-select").value;
+  leagueId = leagueIds[season];
+  leaderboardData = [];
+  playerRoster = {};
+  document.getElementById("status").innerText = "Lade Daten für "+season;
+  loadLeaders();
+}
+
+async function loadPlayers(){
+  if(playersData) return;
+  document.getElementById("status").innerText = "Lade Spielerdaten...";
+  playersData = await fetch("https://api.sleeper.app/v1/players/nfl").then(r => r.json());
+}
+
+function calculateSeasonRecords(allWeeks) {
+  const recordsDiv = document.getElementById("records-content");
+  const playerMaxGame = {};
+  const managerTotals = {};
+  const positionMax = {};
+
+  allWeeks.forEach((matchups, weekIdx) => {
+    if (!matchups) return;
+    matchups.forEach(team => {
+      const points = team.players_points || {};
+      for (const playerId in points) {
+        const pts = points[playerId];
+
+        if (!playerMaxGame[playerId] || pts > playerMaxGame[playerId].points) {
+          playerMaxGame[playerId] = { points: pts, week: weekIdx + 1 };
+        }
+
+        if (!managerTotals[team.roster_id]) managerTotals[team.roster_id] = 0;
+        managerTotals[team.roster_id] += pts;
+
+        const pos = normalizePosition(playersData[playerId]?.position || "");
+        if (pos) {
+          if (!positionMax[pos] || pts > positionMax[pos].points) {
+            positionMax[pos] = { playerId, points: pts, week: weekIdx + 1 };
+          }
+        }
+      }
+    });
+  });
+
+  const topPlayers = Object.entries(playerMaxGame)
+    .sort((a, b) => b[1].points - a[1].points)
+    .slice(0, 3);
+
+  const topManagers = Object.entries(managerTotals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([rosterId, points]) => ({
+      rosterId,
+      points,
+      name: document.querySelector(`#roster-select option[value="${rosterId}"]`)?.text || `Roster ${rosterId}`
+    }));
+
+  let html = `<div style="display:flex;gap:16px;flex-wrap:wrap;">`;
+
+  /* BEST GAME CARD */
+  html += `
+  <div class="records-card" style="flex:1;min-width:260px;">
+    <div class="title">🥇 Best Game</div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:10px;
+      text-align:center;
+    ">
+      ${topPlayers.map((entry, idx) => {
+        const pdata = playersData[entry[0]];
+        return `
+          <div style="flex:1;min-width:80px;">
+            <img src="https://sleepercdn.com/content/nfl/players/thumb/${entry[0]}.jpg"
+                 alt="${pdata.full_name}"
+                 style="width:55px;height:55px;border-radius:50%;margin-bottom:4px;">
+
+            <div><strong>#${idx+1}</strong></div>
+
+            <div style="font-size:13px;">
+              ${pdata.full_name}
+            </div>
+
+            <div class="points">
+              ${entry[1].points.toFixed(2)} pts
+            </div>
+
+            <div style="font-size:12px;">
+              Week ${entry[1].week}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  </div>
+  `;
+
+  
+  /* TOP MANAGER CARD */
+html += `
+<div class="records-card" style="flex:1;min-width:260px;">
+  <div class="title">🏆 Top Manager</div>
+
+  <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+  
+    ${topManagers.map((mgr, idx) => {
+
+      const medals = ["🥇","🥈","🥉"];
+
+      return `
+        <div style="
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:6px 10px;
+          border-radius:6px;
+        ">
+
+          <div style="display:flex;align-items:center;gap:10px;">
+            
+            <div style="font-size:20px; width:30px;">
+              ${medals[idx]}
+            </div>
+
+            <div style="font-size:14px; flex:1;">
+              ${mgr.name}
+            </div>
+
+          </div>
+
+          <div class="points" style="margin-left:20px; font-weight:bold;">
+            ${mgr.points.toFixed(2)} pts
+          </div>
+
+        </div>
+      `;
+    }).join('')}
+
+  </div>
+</div>
+`;
+
+  /* POSITION CARDS */
+  const positionOrder = ["QB","RB","WR","TE","DL","LB","DB"];
+
+  html += `<div style="flex-basis:100%;margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;">`;
+
+  positionOrder.forEach(pos => {
+    const rec = positionMax[pos];
+    if(rec){
+      const pdata = playersData[rec.playerId];
+
+      html += `
+      <div class="records-card" style="flex:1;min-width:140px;text-align:center;">
+        <div class="title">${pos}</div>
+
+        <img src="https://sleepercdn.com/content/nfl/players/thumb/${rec.playerId}.jpg"
+             alt="${pdata.full_name}"
+             style="width:40px;height:40px;border-radius:50%;margin:5px 0;">
+
+        <div>${pdata.full_name}</div>
+
+        <div class="points">
+          ${rec.points.toFixed(2)} pts
+        </div>
+
+        <div style="font-size:12px;">
+          Week ${rec.week}
+        </div>
+      </div>
+      `;
+    }
+  });
+
+  html += `</div></div>`;
+
+  recordsDiv.innerHTML = html;
+}
+
+async function loadLeaders(){
+  const status = document.getElementById("status");
+
+  await loadPlayers();
+  status.innerText = "Lade Matchups...";
+
+  const totals = {};
+  const weekRequests = [];
+
+  for(let week=1; week<=seasonWeeks; week++){
+    weekRequests.push(
+      fetch(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`)
+        .then(r => r.json())
+        .catch(() => null)
+    );
+  }
+
+  const allWeeks = await Promise.all(weekRequests);
+
+  allWeeks.forEach(matchups => {
+    if(!matchups) return;
+    matchups.forEach(team => {
+      const points = team.players_points || {};
+      for(const playerId in points){
+        if(!totals[playerId]) totals[playerId] = 0;
+        totals[playerId] += points[playerId];
+        playerRoster[playerId] = team.roster_id;
+      }
+    });
+  });
+
+  leaderboardData = [];
+  for(const id in totals){
+    const player = playersData[id];
+    if(!player) continue;
+    leaderboardData.push({
+      name: player.full_name,
+      team: player.team || "-",
+      position: normalizePosition(player.position),
+      points: totals[id],
+      roster: playerRoster[id],
+      playerId: id
+    });
+  }
+
+  leaderboardData.sort((a,b)=>b.points - a.points);
+
+  status.innerText = "";
+  calculateSeasonRecords(allWeeks);
+  renderTable();
+}
+
+function renderTable(){
+  const posFilter = document.getElementById("positionFilter").value;
+  const rosterFilter = document.getElementById("roster-select").value;
+  const searchFilter = document.getElementById("playerSearch").value.toLowerCase();
+
+  const table = document.getElementById("tableBody");
+  let html = "";
+
+  let filtered = leaderboardData;
+
+  if(posFilter !== "ALL") filtered = filtered.filter(p => p.position === posFilter);
+  if(rosterFilter !== "ALL") filtered = filtered.filter(p => String(p.roster) === rosterFilter);
+  if(searchFilter !== "") filtered = filtered.filter(p => p.name.toLowerCase().includes(searchFilter));
+
+  filtered.slice(0,200).forEach((p,i) => {
+    html += `<tr>
+      <td data-label="Rank">${i+1}</td>
+      <td data-label="Player">
+        <a href="player.html?id=${p.playerId}" target="_blank">${p.name}</a>
+      </td>
+      <td data-label="Team">${p.team}</td>
+      <td data-label="Pos">${p.position}</td>
+      <td data-label="Points">${p.points.toFixed(2)}</td>
+    </tr>`;
+  });
+
+  table.innerHTML = html;
+}
+
+window.onload = () => {
+  const season = document.getElementById("season-select").value;
+  leagueId = leagueIds[season];
+  loadLeaders();
+};
+
+</script>
+
+</body>
+</html>

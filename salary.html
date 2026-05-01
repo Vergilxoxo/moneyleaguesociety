@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Salary Übersicht</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="nav-logo">Dashboard</a>
+    <a href="roster.html" class="nav-link">Roster</a>
+    <a href="undrafted-taxi.html" class="nav-link">UDFA</a>
+    <a href="players.html" class="nav-link">Spielerliste</a>
+
+    <!-- Dropdown -->
+    <div class="dropdown">
+      <button class="dropbtn">League ▾</button>
+      <div class="dropdown-content">
+        <a href="transactions.html">Transactions</a>
+        <a href="statpage.html">Fantasy Stats</a>
+        <a href="records.html">League Records</a>
+        <a href="hof.html">Hall of Fame</a>
+      </div>
+    </div>
+
+    <a href="salary.html" class="nav-link">Salary</a>
+    <a href="rulebook.html" class="nav-link">Regelwerk</a>
+  </div>
+</nav>
+
+  
+  <div class="page-container">
+    <h1>Salary Übersicht</h1>
+
+    <!-- Dropdown für Position -->
+    <div class="filter-container">
+      <label for="position-select">Position:</label>
+      <select id="position-select">
+        <option value="QB">QB</option>
+        <option value="WR">WR</option>
+        <option value="RB">RB</option>
+        <option value="TE">TE</option>
+        <option value="DL">DL</option>
+        <option value="LB">LB</option>
+        <option value="DB">DB</option>
+      </select>
+
+      <input type="text" id="search-input" placeholder="Spieler suchen...">
+    </div>
+
+    <table id="salary-table">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="salary.js"></script>
+</body>
+</html>

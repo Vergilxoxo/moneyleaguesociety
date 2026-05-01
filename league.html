@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gridiron Dynasty League</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="league-container">
+
+  <header class="league-header">
+    <h1>🏈 Gridiron Dynasty League</h1>
+    <p>Season 2026</p>
+  </header>
+  
+  <!-- Matchups -->
+  <section class="matchups-section">
+    <h2>Matchups</h2>
+    <div class="week-select-container">
+      <label for="week-select">Woche wählen:</label>
+      <select id="week-select"></select>
+    </div>
+    <div id="matchups" class="matchups-grid">
+      <!-- Dynamisch gefüllt durch league.js -->
+    </div>
+  </section>
+  
+  <!-- Standings -->
+  <section class="standings-section">
+    <h2>Standings</h2>
+    <table id="standings-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Team</th>
+          <th>Wins</th>
+          <th>Losses</th>
+          <th>Points For</th>
+          <th>Points Against</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+   <!-- League Stats Cards -->
+  <section id="league-stats" class="stats-cards">
+    <!-- Dynamisch gefüllt durch league.js -->
+  </section>
+
+</div>
+
+<script src="league.js"></script>
+
+</body>
+</html>

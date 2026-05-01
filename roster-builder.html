@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Roster Builder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+ <!-- Navigation -->
+ <nav class="navbar">
+   <div class="navbar-container">
+     <a href="index.html" class="nav-logo">Dashboard</a>
+     <a href="roster.html" class="nav-link">Roster</a>
+     <a href="undrafted-taxi.html" class="nav-link">UDFA</a>
+     <a href="players.html" class="nav-link">Spielerliste</a>
+
+     <div class="dropdown">
+       <button class="dropbtn">League ▾</button>
+       <div class="dropdown-content">
+         <a href="transactions.html">Transactions</a>
+         <a href="hof.html">Hall of Fame</a>
+       </div>
+     </div>
+
+     <a href="salary.html" class="nav-link">Salary</a>
+     <a href="rulebook.html" class="nav-link">Regelwerk</a>
+   </div>
+ </nav>
+
+<h1>Roster Builder</h1>
+
+<!-- Roster Auswahl -->
+<div class="filter-container roster-filter">
+  <label for="roster-select">Roster:</label>
+  <select id="roster-select">
+    <option value="1">Ralf</option>
+    <option value="2">TitleTownPat</option>
+    <option value="3">MrNilsson</option>
+    <option value="4">kleinerlouis</option>
+    <option value="5">Ulle</option>
+    <option value="6">TST1860</option>
+    <option value="7">brab97</option>
+    <option value="8">Himp84</option>
+    <option value="9">TobiWalonso</option>
+    <option value="10">49erflo</option>
+    <option value="11">Heesy</option>
+    <option value="12">CrazyGringo</option>
+  </select>
+</div>
+
+<!-- Filter -->
+<div class="filter-container">
+  <input type="text" id="name-filter" placeholder="Name filtern…">
+  <select id="position-filter">
+    <option value="">Alle Positionen</option>
+  </select>
+</div>
+
+<!-- Sichtbarkeit -->
+<div class="filter-container">
+  <label><input type="checkbox" id="toggle-active" checked> Active</label>
+  <label><input type="checkbox" id="toggle-taxi" checked> Taxi</label>
+  <label><input type="checkbox" id="toggle-ir" checked> IR / Reserve</label>
+</div>
+
+<!-- Builder Checkboxen -->
+<div id="builder-checkboxes" class="filter-container">
+  <strong>Roster Builder:</strong>
+</div>
+
+<!-- Active -->
+<div class="roster-section" id="section-active">
+  <h2>Active Roster</h2>
+  <table id="active-roster">
+    <thead><tr id="active-roster-header"></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Taxi -->
+<div class="roster-section" id="section-taxi">
+  <h2>Taxi Squad</h2>
+  <table id="taxi-roster">
+    <thead><tr id="taxi-roster-header"></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- IR -->
+<div class="roster-section" id="section-ir">
+  <h2>IR / Reserve</h2>
+  <table id="ir-roster">
+    <thead><tr id="ir-roster-header"></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- Dead Cap -->
+<div class="roster-section" id="section-deadcap">
+  <h2>Dead Cap</h2>
+  <table id="deadcap-table">
+    <thead>
+      <tr id="deadcap-header"></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script src="roster-builder.js"></script>
+</body>
+</html>

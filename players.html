@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Spielerliste</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+  <div class="navbar-container">
+    <a href="index.html" class="nav-logo">Dashboard</a>
+    <a href="roster.html" class="nav-link">Roster</a>
+    <a href="undrafted-taxi.html" class="nav-link">UDFA</a>
+    <a href="players.html" class="nav-link">Spielerliste</a>
+
+    <!-- Dropdown -->
+    <div class="dropdown">
+      <button class="dropbtn">League ▾</button>
+      <div class="dropdown-content">
+        <a href="transactions.html">Transactions</a>
+        <a href="statpage.html">Fantasy Stats</a>
+        <a href="records.html">League Records</a>
+        <a href="hof.html">Hall of Fame</a>
+      </div>
+    </div>
+
+    <a href="salary.html" class="nav-link">Salary</a>
+    <a href="rulebook.html" class="nav-link">Regelwerk</a>
+  </div>
+</nav>
+
+  <h1>Spielerliste</h1>
+
+  <div class="filter-container">
+  <input type="text" id="search-input" placeholder="Spieler suchen...">
+  <select id="position-filter">
+    <option value="">Alle Positionen</option>
+  </select>
+  <select id="team-filter">
+    <option value="">Alle Teams</option>
+  </select>
+</div>
+
+  <!-- Tabelle -->
+  <table id="players-table">
+    <thead>
+      <tr>
+        <th data-key="Player ID">Player ID</th>
+        <th data-key="full_name">Name</th>
+        <th data-key="position">Position</th>
+        <th data-key="team">Team</th>
+        <th data-key="Contract">Contract</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="players.js"></script>
+</body>
+</html>
+
+
+
+
+
+
