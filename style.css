@@ -13,9 +13,7 @@ h1, h2 {
 color: #2f2419;
 }
 
-/* ----------------------
-Inputs / Filter
-------------------------*/
+/* Inputs */
 .filter-container input,
 .filter-container select,
 #roster-select {
@@ -29,12 +27,10 @@ color: #2f2419;
 background-color: #dccbb2;
 }
 
-/* ----------------------
-Tabellen
-------------------------*/
+/* Tabellen */
 table {
 background-color: #f2e9dc;
-box-shadow: 0 4px 10px rgba(120, 90, 50, 0.15);
+box-shadow: 0 4px 10px rgba(120, 90, 50, 0.12);
 }
 
 thead th {
@@ -61,9 +57,7 @@ tbody td a:hover {
 color: #a67c52;
 }
 
-/* ----------------------
-Buttons / Accent
-------------------------*/
+/* Buttons */
 .back-button,
 #bidBtn,
 #syncBtn {
@@ -77,9 +71,7 @@ color: #fff;
 background-color: #8d6846;
 }
 
-/* ----------------------
-Navbar
-------------------------*/
+/* Navbar */
 .navbar {
 background-color: #e6d8c3;
 }
@@ -90,12 +82,9 @@ color: #2f2419;
 
 .navbar a:hover {
 background-color: #a67c52;
-color: #fff;
 }
 
-/* ----------------------
-Cards allgemein
-------------------------*/
+/* Cards */
 .player-profile,
 .info-grid div,
 #movement-list li,
@@ -109,7 +98,7 @@ background-color: #f2e9dc;
 box-shadow: 0 6px 18px rgba(120, 90, 50, 0.15);
 }
 
-/* Header innerhalb Cards */
+/* Header */
 .hof-header,
 .champion-header,
 .records-card-header {
@@ -117,21 +106,16 @@ background-color: #e6d8c3;
 color: #2f2419;
 }
 
-/* ----------------------
-Champion Card (Fantasy Look)
-------------------------*/
+/* Champion Card */
 .champion-card {
 background: linear-gradient(160deg, #f2e9dc, #e6d8c3);
-box-shadow: 0 10px 25px rgba(120, 90, 50, 0.25);
 }
 
 .champion-card:hover {
 border: 2px solid #c9a46b;
 }
 
-/* ----------------------
-Texte Secondary
-------------------------*/
+/* Secondary Text */
 .docs-p,
 .docs-ul li,
 .docs-ol li,
@@ -141,9 +125,7 @@ Texte Secondary
 color: #8a7a63;
 }
 
-/* ----------------------
-Accent Farben
-------------------------*/
+/* Accent */
 .badge {
 background-color: #a67c52;
 }
@@ -154,9 +136,7 @@ background-color: #a67c52;
 color: #a67c52;
 }
 
-/* ----------------------
-Dropdown
-------------------------*/
+/* Dropdown */
 .dropdown-content {
 background-color: #f2e9dc;
 }
@@ -169,16 +149,12 @@ color: #2f2419;
 background-color: #dccbb2;
 }
 
-/* ----------------------
-Tabellen Hover etc
-------------------------*/
+/* Docs Hover */
 .docs-table tr:hover td {
 background-color: #dccbb2;
 }
 
-/* ----------------------
-Inputs Auction
-------------------------*/
+/* Auction Inputs */
 #playerInput,
 #bidderInput,
 #amountInput {
