@@ -3,19 +3,19 @@
 ------------------------*/
 body {
   font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: linear-gradient(180deg, #fbf7f0, #f3e9d8);
-  color: #2f2419;
+  background: linear-gradient(180deg, #fff1e6, #ffd8bd);
+  color: #3a2118;
   margin: 0;
   padding: 20px;
 }
 
 h1 {
-  color: #2f2419;
+  color: #3a2118;
   margin-bottom: 20px;
 }
 
 h2 {
-  color: #2f2419;
+  color: #3a2118;
   margin-bottom: 10px;
 }
 
@@ -37,15 +37,15 @@ h2 {
   border: none;
   font-size: 14px;
   outline: none;
-  background-color: #f2e9dc;
-  color: #2f2419;
+  background-color: #ffe3d0;
+  color: #3a2118;
   transition: background-color 0.2s;
 }
 
 .filter-container input:hover,
 .filter-container select:hover,
 #roster-select:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Filter Input */
@@ -66,41 +66,41 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 4px 10px rgba(130, 70, 40, 0.14);
   margin-top: 10px;
 }
 
 thead th {
-  background-color: #e6d8c3;
-  color: #2f2419;
+  background-color: #ffc7a6;
+  color: #3a2118;
   font-weight: 600;
   text-align: left;
   padding: 10px;
-  border-bottom: 1px solid #d2bea0;
+  border-bottom: 1px solid #e6a071;
 }
 
 tbody td {
   padding: 10px;
-  border-top: 1px solid #dccbb2;
-  color: #5a4935;
+  border-top: 1px solid #f6b48f;
+  color: #6a3f2b;
 }
 
 tbody tr:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Spieler-Links */
 tbody td a {
-  color: #2f2419;
+  color: #3a2118;
   text-decoration: none;
   font-weight: 500;
 }
 
 tbody td a:hover {
-  color: #a67c52;
+  color: #d9794f;
   text-decoration: underline;
 }
 
@@ -123,7 +123,7 @@ tbody td a:hover {
 
   tbody tr {
     margin-bottom: 15px;
-    border-bottom: 2px solid #dccbb2;
+    border-bottom: 2px solid #f6b48f;
   }
 
   tbody td {
@@ -136,7 +136,7 @@ tbody td a:hover {
   tbody td::before {
     content: attr(data-label);
     font-weight: bold;
-    color: #8a7a63;
+    color: #9a674d;
   }
 }
 
@@ -147,8 +147,8 @@ tbody td a:hover {
   display: inline-block;
   margin-bottom: 15px;
   padding: 6px 12px;
-  background-color: #e6d8c3;
-  color: #2f2419;
+  background-color: #ffc7a6;
+  color: #3a2118;
   text-decoration: none;
   font-weight: 600;
   border-radius: 6px;
@@ -156,8 +156,8 @@ tbody td a:hover {
 }
 
 .back-button:hover {
-  background-color: #a67c52;
-  color: #2f2419;
+  background-color: #d9794f;
+  color: #3a2118;
   transform: translateY(-2px);
 }
 
@@ -165,7 +165,7 @@ tbody td a:hover {
    Navbar / Header
 ------------------------*/
 .navbar {
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
   padding: 10px 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -181,7 +181,7 @@ tbody td a:hover {
 }
 
 .navbar a {
-  color: #2f2419;
+  color: #3a2118;
   text-decoration: none;
   font-weight: 600;
   padding: 6px 12px;
@@ -190,8 +190,8 @@ tbody td a:hover {
 }
 
 .navbar a:hover {
-  background-color: #a67c52;
-  color: #2f2419;
+  background-color: #d9794f;
+  color: #3a2118;
 }
 
 /* ----------------------
@@ -205,7 +205,7 @@ tbody td a:hover {
 
 #roster-select-container label {
   font-weight: 600;
-  color: #2f2419;
+  color: #3a2118;
   font-size: 14px;
   line-height: 1;
   margin: 0 0 4px 0; /* EIN definierter Abstand */
@@ -231,10 +231,10 @@ tbody td a:hover {
 .player-profile {
   display: flex;
   gap: 20px;
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 6px 18px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 6px 18px rgba(130, 70, 40, 0.14);
   align-items: center;
   margin-bottom: 20px;
 }
@@ -245,7 +245,7 @@ tbody td a:hover {
   height: 140px;
   border-radius: 12px;
   object-fit: cover;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
 }
 
 /* Details */
@@ -266,8 +266,8 @@ tbody td a:hover {
 }
 
 .badge {
-  background-color: #a67c52;
-  color: #2f2419;
+  background-color: #d9794f;
+  color: #3a2118;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 13px;
@@ -275,7 +275,7 @@ tbody td a:hover {
 }
 
 .badge.secondary {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Info Grid */
@@ -286,7 +286,7 @@ tbody td a:hover {
 }
 
 .info-grid div {
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   padding: 10px 12px;
   border-radius: 8px;
   display: flex;
@@ -295,7 +295,7 @@ tbody td a:hover {
 }
 
 .info-grid strong {
-  color: #8a7a63;
+  color: #9a674d;
   font-size: 12px;
   margin-bottom: 4px;
 }
@@ -334,7 +334,7 @@ tbody td a:hover {
   display: flex;
   gap: 12px;
   padding: 12px;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   margin-bottom: 10px;
   align-items: center;
@@ -346,11 +346,11 @@ tbody td a:hover {
 
 #movement-list .date {
   font-size: 12px;
-  color: #8a7a63;
+  color: #9a674d;
 }
 
 #movement-list .empty {
-  color: #8a7a63;
+  color: #9a674d;
   font-style: italic;
 }
 
@@ -366,7 +366,7 @@ tbody td a:hover {
 }
 
 #performance-grid .stat-box {
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   padding: 12px;
   text-align: center;
@@ -379,7 +379,7 @@ tbody td a:hover {
 
 #performance-grid .stat-box strong {
   font-size: 12px;
-  color: #8a7a63;
+  color: #9a674d;
   margin-bottom: 4px;
   display: block;
 }
@@ -387,7 +387,7 @@ tbody td a:hover {
 #performance-grid .stat-box span {
   font-size: 18px;
   font-weight: 600;
-  color: #2f2419;
+  color: #3a2118;
 }
 
 #performance-grid .stat-box .icon {
@@ -411,17 +411,17 @@ thead th::after {
   content: "⇅";
   font-size: 11px;
   margin-left: 6px;
-  color: #b59a73;
+  color: #c48664;
 }
 
 thead th.sort-asc::after {
   content: "▲";
-  color: #a67c52;
+  color: #d9794f;
 }
 
 thead th.sort-desc::after {
   content: "▼";
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* ----------------------
@@ -431,7 +431,7 @@ thead th.sort-desc::after {
 .docs-link {
   display: inline-block;
   margin: 6px 0 14px 0;
-  color: #a67c52;
+  color: #d9794f;
   font-weight: 600;
   text-decoration: none;
   word-break: break-all;
@@ -446,12 +446,12 @@ thead th.sort-desc::after {
 ------------------------*/
 #docs-block {
   width: 100%;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(120, 90, 50, 0.12);
-  border: 1px solid #e6d8c3;
-  color: #2f2419;
+  box-shadow: 0 4px 10px rgba(130, 70, 40, 0.14);
+  border: 1px solid #ffc7a6;
+  color: #3a2118;
   font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.5;
@@ -472,7 +472,7 @@ thead th.sort-desc::after {
   font-weight: 600;
   margin-top: 20px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #dccbb2;
+  border-bottom: 1px solid #f6b48f;
   padding-bottom: 6px;
 }
 
@@ -481,26 +481,26 @@ thead th.sort-desc::after {
   font-weight: 600;
   margin-top: 16px;
   margin-bottom: 8px;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* Paragraph */
 .docs-p {
   margin-bottom: 12px;
-  color: #5a4935;
+  color: #6a3f2b;
 }
 
 /* Links */
 .docs-link {
   display: inline-block;
   margin: 6px 0 12px 0;
-  color: #2f2419;
+  color: #3a2118;
   text-decoration: underline;
   font-weight: 500;
 }
 
 .docs-link:hover {
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* Lists */
@@ -511,7 +511,7 @@ thead th.sort-desc::after {
 
 .docs-ul li, .docs-ol li {
   margin-bottom: 6px;
-  color: #5a4935;
+  color: #6a3f2b;
 }
 
 /* Mobile */
@@ -524,31 +524,31 @@ thead th.sort-desc::after {
 .docs-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 4px 10px rgba(130, 70, 40, 0.14);
   margin-bottom: 20px;
   font-size: 14px;
 }
 
 .docs-table th {
-  background-color: #e6d8c3;
-  color: #2f2419;
+  background-color: #ffc7a6;
+  color: #3a2118;
   font-weight: 600;
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #dccbb2;
+  border-bottom: 1px solid #f6b48f;
 }
 
 .docs-table td {
   padding: 10px;
-  color: #5a4935;
-  border-top: 1px solid #dccbb2;
+  color: #6a3f2b;
+  border-top: 1px solid #f6b48f;
 }
 
 .docs-table tr:hover td {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Transactions Player Cell */
@@ -603,7 +603,7 @@ thead th.sort-desc::after {
 }
 .league-header p {
   font-size: 1.1rem;
-  color: #8a7a63;
+  color: #9a674d;
 }
 
 /* Stats Cards */
@@ -616,7 +616,7 @@ thead th.sort-desc::after {
 }
 .stats-card {
   flex: 1 1 220px;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   padding: 15px;
   border-radius: 8px;
   text-align: center;
@@ -635,7 +635,7 @@ thead th.sort-desc::after {
   margin-top: 15px;
 }
 .matchup-card {
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   padding: 15px;
   text-align: center;
@@ -651,7 +651,7 @@ thead th.sort-desc::after {
 .matchup-score {
   font-size: 1.3rem;
   margin-bottom: 5px;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* Standings Table */
@@ -659,7 +659,7 @@ thead th.sort-desc::after {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -668,10 +668,10 @@ thead th.sort-desc::after {
   text-align: left;
 }
 .standings-section thead {
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
 }
 .standings-section tbody tr:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Dropdown */
@@ -681,8 +681,8 @@ thead th.sort-desc::after {
 .week-select-container select {
   padding: 6px 10px;
   border-radius: 6px;
-  background-color: #f2e9dc;
-  color: #2f2419;
+  background-color: #ffe3d0;
+  color: #3a2118;
   border: none;
   font-size: 14px;
 }
@@ -713,10 +713,10 @@ thead th.sort-desc::after {
 }
 
 .hof-card {
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 6px 16px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 6px 16px rgba(130, 70, 40, 0.14);
   transition: transform 0.2s;
 }
 
@@ -725,14 +725,14 @@ thead th.sort-desc::after {
 }
 
 .hof-header {
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
   padding: 10px;
   text-align: center;
   font-weight: 600;
 }
 
 .hof-season {
-  color: #a67c52;
+  color: #d9794f;
 }
 
 .hof-body {
@@ -741,7 +741,7 @@ thead th.sort-desc::after {
 }
 
 .hof-manager {
-  color: #8a7a63;
+  color: #9a674d;
   font-size: 14px;
   margin-bottom: 12px;
 }
@@ -758,7 +758,7 @@ thead th.sort-desc::after {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #dccbb2;
+  border: 2px solid #f6b48f;
 }
 
 .hof-score {
@@ -781,28 +781,28 @@ thead th.sort-desc::after {
 /* Card selbst leicht hervorheben */
 .champion-card {
   position: relative; /* für Badge */
-  background: linear-gradient(160deg, #f2e9dc, #e6d8c3);
+  background: linear-gradient(160deg, #ffe3d0, #ffc7a6);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(120, 90, 50, 0.18);
+  box-shadow: 0 10px 25px rgba(130, 70, 40, 0.20);
   transition: transform 0.25s, box-shadow 0.25s, border 0.25s;
 }
 
 .champion-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 35px rgba(120, 90, 50, 0.24);
+  box-shadow: 0 16px 35px rgba(130, 70, 40, 0.26);
   border: 2px solid gold; /* epische goldene Umrandung beim Hover */
 }
 
 /* Header */
 .champion-header {
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
   padding: 14px;
   text-align: center;
   font-weight: 700;
-  color: #a67c52;
+  color: #d9794f;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #dccbb2;
+  border-bottom: 1px solid #f6b48f;
 }
 
 /* Body */
@@ -817,7 +817,7 @@ thead th.sort-desc::after {
 }
 
 .champion-manager {
-  color: #8a7a63;
+  color: #9a674d;
   font-size: 14px;
   margin-bottom: 18px;
 }
@@ -844,19 +844,19 @@ thead th.sort-desc::after {
   height: 46px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #dccbb2;
+  border: 2px solid #f6b48f;
   margin-bottom: 10px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .hero img:hover {
   transform: scale(1.15);
-  box-shadow: 0 0 10px #a67c52;
+  box-shadow: 0 0 10px #d9794f;
 }
 
 .hero span {
   font-size: 12px;
-  color: #5a4935;
+  color: #6a3f2b;
   line-height: 1.5;       /* mehr Abstand zwischen Zeilen */
   word-break: break-word;  /* längere Namen umbrechen */
 }
@@ -866,20 +866,20 @@ thead th.sort-desc::after {
   display: flex;
   justify-content: center;
   gap: 40px;
-  border-top: 1px solid #dccbb2;
+  border-top: 1px solid #f6b48f;
   padding-top: 15px;
 }
 
 .stat strong {
   display: block;
   font-size: 12px;
-  color: #8a7a63;
+  color: #9a674d;
 }
 
 .stat span {
   font-size: 18px;
   font-weight: 600;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* ----------------------
@@ -896,7 +896,7 @@ thead th.sort-desc::after {
 .dropbtn {
   background: none;
   border: none;
-  color: #2f2419;
+  color: #3a2118;
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 6px;
@@ -907,7 +907,7 @@ thead th.sort-desc::after {
 }
 
 .dropbtn:hover {
-  background-color: #a67c52;
+  background-color: #d9794f;
 }
 
 /* Dropdown Box */
@@ -916,10 +916,10 @@ thead th.sort-desc::after {
   position: absolute;
   top: 100%;              /* statt 38px */
   left: 0;
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   min-width: 170px;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(120, 90, 50, 0.18);
+  box-shadow: 0 6px 18px rgba(130, 70, 40, 0.20);
   overflow: hidden;
   z-index: 100;
 }
@@ -931,7 +931,7 @@ thead th.sort-desc::after {
 
 /* Links */
 .dropdown-content a {
-  color: #2f2419;
+  color: #3a2118;
   padding: 10px 14px;
   display: block;
   text-decoration: none;
@@ -940,7 +940,7 @@ thead th.sort-desc::after {
 }
 
 .dropdown-content a:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 /* Dropdown sichtbar */
@@ -950,11 +950,11 @@ thead th.sort-desc::after {
 
 /* Season Records Cards */
 .records-card {
-  background-color: #f2e9dc; /* passend zum restlichen Dark-Theme */
+  background-color: #ffe3d0; /* passend zum restlichen Dark-Theme */
   border-radius: 10px;
   padding: 12px;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 2px 6px rgba(130, 70, 40, 0.14);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -963,7 +963,7 @@ thead th.sort-desc::after {
 
 .records-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(120, 90, 50, 0.18);
+  box-shadow: 0 6px 12px rgba(130, 70, 40, 0.20);
 }
 
 /* Spielerbild rund + passend zum Dark Theme */
@@ -972,21 +972,21 @@ thead th.sort-desc::after {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #dccbb2; /* dezente Umrandung */
+  border: 2px solid #f6b48f; /* dezente Umrandung */
   margin-bottom: 8px;
 }
 
 /* Titel und Punkte */
 .records-card .title {
   font-size: 12px;
-  color: #8a7a63;
+  color: #9a674d;
   margin-bottom: 4px;
 }
 
 .records-card .points {
   font-size: 16px;
   font-weight: 600;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 .records-grid {
@@ -997,11 +997,11 @@ thead th.sort-desc::after {
 }
 
 .records-card {
-  background-color: #f2e9dc;
+  background-color: #ffe3d0;
   border-radius: 10px;
   padding: 14px;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(120, 90, 50, 0.12);
+  box-shadow: 0 2px 6px rgba(130, 70, 40, 0.14);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1010,7 +1010,7 @@ thead th.sort-desc::after {
 
 .records-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(120, 90, 50, 0.18);
+  box-shadow: 0 6px 12px rgba(130, 70, 40, 0.20);
 }
 
 .records-card img {
@@ -1018,25 +1018,25 @@ thead th.sort-desc::after {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #dccbb2;
+  border: 2px solid #f6b48f;
   margin-bottom: 8px;
 }
 
 .records-card .title {
   font-size: 12px;
-  color: #8a7a63;
+  color: #9a674d;
   margin-bottom: 4px;
 }
 
 .records-card .points {
   font-size: 16px;
   font-weight: 600;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 .records-card .owner {
   font-size: 13px;
-  color: #5a4935;
+  color: #6a3f2b;
   margin-top: 2px;
 }
 
@@ -1056,10 +1056,10 @@ thead th.sort-desc::after {
 
 /* Header */
 .records-header {
-  background-color: #e6d8c3;
+  background-color: #ffc7a6;
   font-weight: 600;
-  color: #8a7a63;
-  border-bottom: 2px solid #dccbb2;
+  color: #9a674d;
+  border-bottom: 2px solid #f6b48f;
 }
 
 /* Cells */
@@ -1070,12 +1070,12 @@ thead th.sort-desc::after {
 
 /* Rows */
 .record-row {
-  border-bottom: 1px solid #dccbb2;
+  border-bottom: 1px solid #f6b48f;
   transition: background 0.15s;
 }
 
 .record-row:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 .record-row:last-child {
@@ -1085,13 +1085,13 @@ thead th.sort-desc::after {
 /* Rank */
 .rank {
   font-weight: 700;
-  color: #a67c52;
+  color: #d9794f;
 }
 
 /* Points */
 .points {
   font-weight: 600;
-  color: #a67c52;
+  color: #d9794f;
   text-align: right;
 }
 
@@ -1106,12 +1106,12 @@ thead th.sort-desc::after {
 .records-card-header {
   font-size: 16px;
   font-weight: 700;
-  color: #2f2419;
-  background-color: #e6d8c3; /* dunkler Header */
+  color: #3a2118;
+  background-color: #ffc7a6; /* dunkler Header */
   padding: 10px 16px;
   width: 100%;
   text-align: center;
-  border-bottom: 2px solid #dccbb2;
+  border-bottom: 2px solid #f6b48f;
   border-radius: 10px 10px 0 0; /* abgerundete obere Ecken */
   margin-bottom: 8px;
 }
@@ -1137,15 +1137,15 @@ thead th.sort-desc::after {
   padding: 8px 10px;
   border-radius: 6px;
   border: none;
-  background-color: #f2e9dc;
-  color: #2f2419;
+  background-color: #ffe3d0;
+  color: #3a2118;
   font-size: 16px;
 }
 
 #bidderInput {
   appearance: none;
-  background-color: #f2e9dc;
-  color: #2f2419;
+  background-color: #ffe3d0;
+  color: #3a2118;
   cursor: pointer;
 }
 
@@ -1181,7 +1181,7 @@ thead th.sort-desc::after {
   padding: 8px 12px;
   border-radius: 6px;
   border: none;
-  background-color: #a67c52;
+  background-color: #d9794f;
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -1190,7 +1190,7 @@ thead th.sort-desc::after {
 
 #bidBtn:hover,
 #syncBtn:hover {
-  background-color: #8d6846;
+  background-color: #bf5f3d;
 }
 
 /* ======================
@@ -1202,8 +1202,8 @@ thead th.sort-desc::after {
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #f2e9dc;
-  border: 1px solid #dccbb2;
+  background-color: #ffe3d0;
+  border: 1px solid #f6b48f;
   border-radius: 6px;
   max-height: 220px;
   overflow-y: auto;
@@ -1221,7 +1221,7 @@ thead th.sort-desc::after {
 }
 
 #playerDropdown li:hover {
-  background-color: #dccbb2;
+  background-color: #f6b48f;
 }
 
 .finished-row {
