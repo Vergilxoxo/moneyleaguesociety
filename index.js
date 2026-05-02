@@ -16,15 +16,15 @@ const ownerMap = {
 };
 
 // ----------------------------
-// Creme Theme Farben
-const creamTheme = {
-  card: "#f2e9dc",
-  header: "#e6d8c3",
-  row: "#f6efe4",
-  border: "#dccbb2",
-  text: "#2f2419",
-  muted: "#8a7a63",
-  shadow: "0 4px 10px rgba(120, 90, 50, 0.12)",
+// Pfirsich Theme Farben
+const peachTheme = {
+  card: "#ffe3d0",
+  header: "#ffc7a6",
+  row: "#fff1e6",
+  border: "#f6b48f",
+  text: "#3a2118",
+  muted: "#9a674d",
+  shadow: "0 4px 10px rgba(130, 70, 40, 0.14)",
   danger: "#ff4d4d"
 };
 
@@ -81,13 +81,13 @@ async function renderTeamCapBlock() {
     container = document.createElement("div");
     container.id = "team-cap-block";
     container.style.width = "100%";
-    container.style.backgroundColor = creamTheme.card;
+    container.style.backgroundColor = peachTheme.card;
     container.style.padding = "15px";
     container.style.borderRadius = "8px";
     container.style.marginBottom = "20px";
-    container.style.boxShadow = creamTheme.shadow;
-    container.style.border = `1px solid ${creamTheme.border}`;
-    container.style.color = creamTheme.text;
+    container.style.boxShadow = peachTheme.shadow;
+    container.style.border = `1px solid ${peachTheme.border}`;
+    container.style.color = peachTheme.text;
     container.style.fontFamily = '"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif';
     container.style.fontSize = "14px";
     container.style.lineHeight = "1.4";
@@ -103,19 +103,18 @@ async function renderTeamCapBlock() {
   const header = document.createElement("div");
   header.style.display = "flex";
   header.style.fontWeight = "600";
-  header.style.backgroundColor = creamTheme.header;
+  header.style.backgroundColor = peachTheme.header;
   header.style.padding = "6px 12px";
   header.style.borderRadius = "6px";
   header.style.marginBottom = "8px";
   header.style.gap = "8px";
-  header.style.color = creamTheme.text;
+  header.style.color = peachTheme.text;
 
   header.innerHTML = `
     <span style="flex:1.5">Owner</span>
     <span style="flex:1; text-align:right">Team Cap Space</span>
     <span style="flex:1; text-align:right">FAAB</span>
   `;
-
   container.appendChild(header);
 
   rosters.forEach((roster, index) => {
@@ -123,17 +122,11 @@ async function renderTeamCapBlock() {
     const allIds = (roster.players || []).map(String);
     const taxiIds = (roster.taxi || []).map(String);
     const irIds = (roster.reserve || []).map(String);
-
     const activeIds = allIds.filter(id => !taxiIds.includes(id) && !irIds.includes(id));
-    const activePlayers = activeIds
-      .map(id => sheetData.find(p => String(p["Player ID"]) === id))
-      .filter(Boolean);
-
+    const activePlayers = activeIds.map(id => sheetData.find(p => String(p["Player ID"]) === id)).filter(Boolean);
     const deadCapPlayers = cutSheetData.filter(p => p.Owner === owner);
 
-    const sumForYear = players =>
-      players.reduce((sum, p) => sum + parseValue(p[year]), 0);
-
+    const sumForYear = players => players.reduce((sum, p) => sum + parseValue(p[year]), 0);
     const capSpace = teamCap - sumForYear(activePlayers) - sumForYear(deadCapPlayers);
     const faab = Math.floor(capSpace / 10000);
 
@@ -141,22 +134,15 @@ async function renderTeamCapBlock() {
     row.style.display = "flex";
     row.style.gap = "8px";
     row.style.padding = "6px 12px";
-    row.style.color = creamTheme.text;
+    row.style.color = peachTheme.text;
 
-    if (index % 2 === 0) {
-      row.style.backgroundColor = creamTheme.row;
-    }
+    if (index % 2 === 0) row.style.backgroundColor = peachTheme.row;
 
     row.innerHTML = `
       <span style="flex:1.5">${owner}</span>
-      <span style="flex:1; text-align:right; color:${capSpace < 0 ? creamTheme.danger : creamTheme.text}">
-        ${formatMoney(capSpace)}
-      </span>
-      <span style="flex:1; text-align:right; color:${faab < 0 ? creamTheme.danger : creamTheme.text}">
-        ${faab}
-      </span>
+      <span style="flex:1; text-align:right; color:${capSpace < 0 ? peachTheme.danger : peachTheme.text}">${formatMoney(capSpace)}</span>
+      <span style="flex:1; text-align:right; color:${faab < 0 ? peachTheme.danger : peachTheme.text}">${faab}</span>
     `;
-
     container.appendChild(row);
   });
 }
@@ -195,13 +181,13 @@ async function renderVeteranTaxiBlock() {
     container = document.createElement("div");
     container.id = "veteran-taxi-block";
     container.style.width = "100%";
-    container.style.backgroundColor = creamTheme.card;
+    container.style.backgroundColor = peachTheme.card;
     container.style.padding = "15px";
     container.style.borderRadius = "8px";
     container.style.marginBottom = "20px";
-    container.style.boxShadow = creamTheme.shadow;
-    container.style.border = `1px solid ${creamTheme.border}`;
-    container.style.color = creamTheme.text;
+    container.style.boxShadow = peachTheme.shadow;
+    container.style.border = `1px solid ${peachTheme.border}`;
+    container.style.color = peachTheme.text;
     container.style.fontFamily = '"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif';
     container.style.fontSize = "14px";
     container.style.lineHeight = "1.4";
@@ -217,7 +203,7 @@ async function renderVeteranTaxiBlock() {
       margin: 0 0 12px 0;
       font-size: 20px;
       font-weight: 700;
-      color: ${creamTheme.text};
+      color: ${peachTheme.text};
     ">
       Veteran on Taxi
     </h2>
@@ -225,8 +211,8 @@ async function renderVeteranTaxiBlock() {
     <div style="
       display:flex;
       font-weight:600;
-      background:${creamTheme.header};
-      color:${creamTheme.text};
+      background:${peachTheme.header};
+      color:${peachTheme.text};
       padding:6px 12px;
       border-radius:6px;
       margin-bottom:8px;
@@ -240,7 +226,7 @@ async function renderVeteranTaxiBlock() {
 
   if (!taxiPlayers.length) {
     container.innerHTML += `
-      <div style="padding:6px 12px;color:${creamTheme.muted}">
+      <div style="padding:6px 12px;color:${peachTheme.muted}">
         Keine Veteran-Taxi-Spieler vorhanden.
       </div>
     `;
@@ -252,8 +238,8 @@ async function renderVeteranTaxiBlock() {
       <div style="
         display:flex;
         padding:6px 12px;
-        color:${creamTheme.text};
-        ${i % 2 === 0 ? `background:${creamTheme.row};` : ""}
+        color:${peachTheme.text};
+        ${i % 2 === 0 ? `background:${peachTheme.row};` : ""}
       ">
         <span style="flex:2">${p.Name}</span>
         <span style="flex:1">${p.Position}</span>
@@ -324,13 +310,13 @@ async function renderPlayersWithoutContractBlock() {
     container = document.createElement("div");
     container.id = "players-without-contract-block";
     container.style.width = "100%";
-    container.style.backgroundColor = creamTheme.card;
+    container.style.backgroundColor = peachTheme.card;
     container.style.padding = "15px";
     container.style.borderRadius = "8px";
     container.style.marginBottom = "20px";
-    container.style.boxShadow = creamTheme.shadow;
-    container.style.border = `1px solid ${creamTheme.border}`;
-    container.style.color = creamTheme.text;
+    container.style.boxShadow = peachTheme.shadow;
+    container.style.border = `1px solid ${peachTheme.border}`;
+    container.style.color = peachTheme.text;
     container.style.fontFamily = '"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif';
     container.style.fontSize = "14px";
     container.style.lineHeight = "1.4";
@@ -349,7 +335,7 @@ async function renderPlayersWithoutContractBlock() {
       margin:0 0 12px 0;
       font-size:20px;
       font-weight:700;
-      color:${creamTheme.text};
+      color:${peachTheme.text};
     ">
       Spieler ohne Vertrag
     </h2>
@@ -357,8 +343,8 @@ async function renderPlayersWithoutContractBlock() {
     <div style="
       display:flex;
       font-weight:600;
-      background:${creamTheme.header};
-      color:${creamTheme.text};
+      background:${peachTheme.header};
+      color:${peachTheme.text};
       padding:6px 12px;
       border-radius:6px;
       margin-bottom:8px;
@@ -372,7 +358,7 @@ async function renderPlayersWithoutContractBlock() {
 
   if (!playersWithoutContract.length) {
     container.innerHTML += `
-      <div style="padding:6px 12px;color:${creamTheme.muted}">
+      <div style="padding:6px 12px;color:${peachTheme.muted}">
         Alle Roster-Spieler haben ein Gehalt.
       </div>
     `;
@@ -384,8 +370,8 @@ async function renderPlayersWithoutContractBlock() {
       <div style="
         display:flex;
         padding:6px 12px;
-        color:${creamTheme.text};
-        ${i % 2 === 0 ? `background:${creamTheme.row};` : ""}
+        color:${peachTheme.text};
+        ${i % 2 === 0 ? `background:${peachTheme.row};` : ""}
       ">
         <span style="flex:2">${p.Name}</span>
         <span style="flex:1">${p.Position}</span>
